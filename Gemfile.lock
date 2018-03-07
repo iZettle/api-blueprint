@@ -2,6 +2,8 @@ PATH
   remote: .
   specs:
     api-blueprint (0.1.0)
+      dry-configurable
+      dry-initializer
       dry-struct
       dry-types
       rails (~> 5.1.5)
@@ -60,6 +62,7 @@ GEM
     dry-core (0.4.4)
       concurrent-ruby (~> 1.0)
     dry-equalizer (0.2.0)
+    dry-initializer (2.4.0)
     dry-logic (0.4.2)
       dry-container (~> 0.2, >= 0.2.6)
       dry-core (~> 0.2)
