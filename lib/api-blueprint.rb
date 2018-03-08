@@ -2,6 +2,7 @@ require 'dry-types'
 require 'dry-struct'
 require 'dry-initializer'
 require 'faraday'
+require 'faraday_middleware'
 
 require 'api-blueprint/types'
 require 'api-blueprint/model'

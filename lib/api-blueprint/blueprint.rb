@@ -1,28 +1,33 @@
 module ApiBlueprint
   class Blueprint < Dry::Struct
-    extend Dry::Configurable
-
     constructor_type :schema
-
-    setting :default_connection, Faraday.new
 
     attribute :http_method, Types::Symbol.enum(*Faraday::Connection::METHODS)
     attribute :url, Types::String
     attribute :headers, Types::Hash.optional.default(Hash.new)
 
-    attribute :connection, Types.Instance(Faraday::Connection).optional.default {
-      self.config.default_connection
-    }
-
-    def run(runner_options)
-      response = self.connection.send self.http_method do |req|
-        req.url self.url
-        req.headers = runner_options[:headers].merge(self.headers)
+    def connection
+      Faraday.new do |conn|
+        conn.response :json, content_type: /\bjson$/
+        conn.adapter Faraday.default_adapter
+        conn.headers = {
+          "User-Agent": "ApiBlueprint"
+        }
       end
-
-      binding.pry
-
-      response
     end
+
+    # TODO -> write tests for all of this..
+    def run(runner_options = {})
+      connection.send self.http_method do |req|
+        req.url self.url
+
+        begin
+          req.headers.merge! runner_options.fetch(:headers, {}).merge(self.headers)
+        rescue
+          binding.pry
+        end
+      end
+    end
+
   end
 end

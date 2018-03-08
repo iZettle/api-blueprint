@@ -22,8 +22,10 @@ Gem::Specification.new do |s|
   s.add_dependency "dry-initializer"
   s.add_dependency "dry-configurable"
   s.add_dependency "faraday"
+  s.add_dependency "faraday_middleware"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "pry"
   s.add_development_dependency "rspec"
+  s.add_development_dependency "webmock"
 end

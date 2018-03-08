@@ -3,7 +3,5 @@ module ApiBlueprint
     extend Dry::Configurable
 
     constructor_type :schema
-
-    
   end
 end
