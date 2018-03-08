@@ -1,23 +1,17 @@
 module ApiBlueprint
   class Runner
     extend Dry::Initializer
-    extend Dry::Configurable
-
-    setting :faraday_adapter, Faraday.default_adapter
 
     option :headers, default: proc { {} }
 
     def run(blueprint)
-      response = Faraday.send blueprint.http_method do |req|
-        req.adapter *self.class.config.faraday_adapter
+      blueprint.run options
+    end
 
-        req.url blueprint.url
-        req.headers = self.headers.merge(blueprint.headers)
-      end
+    private
 
-      # binding.pry
-
-      response
+    def options
+      { headers: self.headers }
     end
   end
 end
