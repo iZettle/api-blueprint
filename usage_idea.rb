@@ -2,8 +2,8 @@ class Car < ApiBlueprint::Model
   attribute :name, Types::String
   attribute :color, Types::String
 
-  config do
-    host "http://my-api.com"
+  configure do |config|
+    config.host = "http://my-api.com"
   end
 
   def self.fetch_car
