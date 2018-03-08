@@ -27,7 +27,7 @@ module ApiBlueprint
         if response.body.is_a? Array
           response.body.collect { |item| self.creates.new item.symbolize_keys }
         else
-          self.creates.new response.body.symbolize_keys
+          self.creates.new response.body.with_indifferent_access
         end
       else
         response
