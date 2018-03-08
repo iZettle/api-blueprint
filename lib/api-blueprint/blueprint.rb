@@ -16,7 +16,6 @@ module ApiBlueprint
       end
     end
 
-    # TODO -> write tests for all of this..
     def run(runner_options = {})
       connection.send self.http_method do |req|
         req.url self.url
