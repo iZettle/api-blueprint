@@ -102,4 +102,34 @@ describe ApiBlueprint::Blueprint do
       expect(no_car).to be_a Faraday::Response
     end
   end
+
+  describe "building collections" do
+    before do
+      stub_request(:get, "http://cars").to_return(
+        body: [{ name: "Ford", color: "red" }, { name: "Tesla", color: "black" }].to_json,
+        headers: { "Content-Type"=> "application/json" }
+      )
+    end
+
+    let(:cars) { ApiBlueprint::Blueprint.new(url: "http://cars", creates: Car).run }
+
+    it "returns an array" do
+      expect(cars).to be_a Array
+      expect(cars.length).to eq 2
+    end
+
+    it "initializes the correct classes" do
+      expect(cars).to all(be_a(Car))
+    end
+
+    it "sets the attributes on each item correctly" do
+      expect(cars[0].name).to eq "Ford"
+      expect(cars[1].name).to eq "Tesla"
+    end
+
+    it "returns the response if no `creates` option was passed" do
+      no_cars = ApiBlueprint::Blueprint.new(url: "http://cars").run
+      expect(no_cars).to be_a Faraday::Response
+    end
+  end
 end

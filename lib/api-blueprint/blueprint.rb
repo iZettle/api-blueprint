@@ -24,7 +24,11 @@ module ApiBlueprint
       end
 
       if self.creates.present?
-        self.creates.new response.body.symbolize_keys
+        if response.body.is_a? Array
+          response.body.collect { |item| self.creates.new item.symbolize_keys }
+        else
+          self.creates.new response.body.symbolize_keys
+        end
       else
         response
       end
