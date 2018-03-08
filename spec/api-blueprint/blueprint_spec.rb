@@ -12,6 +12,10 @@ describe ApiBlueprint::Blueprint do
         ApiBlueprint::Blueprint.new http_method: :foobar
       }.to raise_exception(Dry::Struct::Error)
     end
+
+    it "defaults to :get" do
+      expect(ApiBlueprint::Blueprint.new.http_method).to eq :get
+    end
   end
 
   describe "url" do
@@ -35,11 +39,8 @@ describe ApiBlueprint::Blueprint do
 
   describe "run" do
     it "calls the correct url" do
-      stub_request(:get, "http://web/foo").to_return(body: "hello world")
-
-      blueprint = ApiBlueprint::Blueprint.new http_method: :get, url: "http://web/foo"
-      response = blueprint.run
-      expect(response.body).to eq "hello world"
+      stub_request(:get, "http://web/foo")
+      ApiBlueprint::Blueprint.new(url: "http://web/foo").run
     end
 
     it "parses json when the response content type is application/json" do
@@ -47,8 +48,7 @@ describe ApiBlueprint::Blueprint do
         body: { foo: "bar" }.to_json,
         headers: { "Content-Type"=> "application/json" }
       )
-      blueprint = ApiBlueprint::Blueprint.new http_method: :get, url: "http://web/json"
-      response = blueprint.run
+      response = ApiBlueprint::Blueprint.new(url: "http://web/json").run
       expect(response.body).to be_a Hash
     end
 
@@ -57,9 +57,18 @@ describe ApiBlueprint::Blueprint do
         body: { foo: "bar" }.to_json,
         headers: { "Content-Type"=> "text/plain" }
       )
-      blueprint = ApiBlueprint::Blueprint.new http_method: :get, url: "http://web/json", headers: { foo: "1" }
-      response = blueprint.run
+      response = ApiBlueprint::Blueprint.new(url: "http://web/json", headers: { foo: "1" }).run
       expect(response.body).to be_a String
+    end
+
+    it "uses the correct http_method" do
+      stub_request(:post, "http://post-request")
+      ApiBlueprint::Blueprint.new(http_method: :post, url: "http://post-request").run
+    end
+
+    it "sends headers" do
+      stub_request(:get, "http://foo").with(headers: { hello: "world" })
+      ApiBlueprint::Blueprint.new(url: "http://foo", headers: { hello: "world" }).run
     end
   end
 end

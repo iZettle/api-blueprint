@@ -1,17 +1,21 @@
 class Car < ApiBlueprint::Model
-  attribute :name
-  attribute :color
+  attribute :name, Types::String
+  attribute :color, Types::String
 
   config do
     host "http://my-api.com"
   end
 
-  blueprint :fetch_car, get: "/current_car"
+  def self.fetch_car
+    blueprint :get, "/current_car"
+  end
 
-  blueprint :create_car, post: "/cars"
+  def self.create_car(params)
+    blueprint :post, "/cars", body: params
+  end
 
-  blueprint :update, put: "/cars/:id" do |params|
-    params.merge({ color: "red" })
+  def self.update(params)
+    blueprint :put, "/cars/#{params[:id]}", body: params.merge({ color: "red" })
   end
 end
 
@@ -30,14 +34,14 @@ end
 
 class CarController < ApplicationController
   def index
-    @car = api.run(Car, :fetch_car)
+    @car = api.run Car.fetch_car
   end
 
   def create
-    @new_car = api.run(Car, :create_car, params: { name: "Ford" })
+    @new_car = api.run Car.create_car(name: "Ford")
   end
 
   def update
-    api.run(Car, :update, url: { id: 123 }, params: { name: "Opel" })
+    api.run Car.update(id: 123, name: "Opel")
   end
 end

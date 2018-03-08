@@ -2,7 +2,7 @@ module ApiBlueprint
   class Blueprint < Dry::Struct
     constructor_type :schema
 
-    attribute :http_method, Types::Symbol.enum(*Faraday::Connection::METHODS)
+    attribute :http_method, Types::Symbol.default(:get).enum(*Faraday::Connection::METHODS)
     attribute :url, Types::String
     attribute :headers, Types::Hash.optional.default(Hash.new)
 
@@ -20,12 +20,7 @@ module ApiBlueprint
     def run(runner_options = {})
       connection.send self.http_method do |req|
         req.url self.url
-
-        begin
-          req.headers.merge! runner_options.fetch(:headers, {}).merge(self.headers)
-        rescue
-          binding.pry
-        end
+        req.headers.merge! runner_options.fetch(:headers, {}).merge(self.headers)
       end
     end
 
