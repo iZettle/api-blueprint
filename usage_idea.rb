@@ -1,13 +1,16 @@
 class Car < ApiBlueprint::Model
+  attribute :name
+  attribute :color
+
   config do
     host "http://my-api.com"
   end
 
-  api_endpoint :fetch_car, get: "/current_car"
+  blueprint :fetch_car, get: "/current_car"
 
-  api_endpoint :create_car, post: "/cars"
+  blueprint :create_car, post: "/cars"
 
-  api_endpoint :update, put: "/cars/:id" do |params|
+  blueprint :update, put: "/cars/:id" do |params|
     params.merge({ color: "red" })
   end
 end

@@ -1,12 +1,12 @@
 require 'dry-types'
 require 'dry-struct'
 require 'dry-initializer'
+require 'faraday'
 
+require 'api-blueprint/types'
 require 'api-blueprint/model'
-
-module Types
-  include Dry::Types.module
-end
+require 'api-blueprint/blueprint'
+require 'api-blueprint/runner'
 
 module ApiBlueprint
   # Your code goes here...

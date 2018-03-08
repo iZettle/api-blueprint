@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "dry-struct"
   s.add_dependency "dry-initializer"
   s.add_dependency "dry-configurable"
+  s.add_dependency "faraday"
 
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "pry"
