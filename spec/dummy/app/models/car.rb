@@ -1,4 +1,4 @@
 class Car < ApiBlueprint::Model
   attribute :name, Types::String
-  attribute :age, Types::Int.optional
+  attribute :color, Types::String.optional
 end

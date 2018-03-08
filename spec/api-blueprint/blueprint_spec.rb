@@ -37,6 +37,12 @@ describe ApiBlueprint::Blueprint do
     end
   end
 
+  describe "creates" do
+    it "can be anything" do
+      expect(ApiBlueprint::Blueprint.new(creates: Integer).creates).to eq Integer
+    end
+  end
+
   describe "run" do
     it "calls the correct url" do
       stub_request(:get, "http://web/foo")
@@ -69,6 +75,31 @@ describe ApiBlueprint::Blueprint do
     it "sends headers" do
       stub_request(:get, "http://foo").with(headers: { hello: "world" })
       ApiBlueprint::Blueprint.new(url: "http://foo", headers: { hello: "world" }).run
+    end
+  end
+
+  describe "building" do
+    before do
+      stub_request(:get, "http://car").to_return(
+        body: { name: "Ford", color: "red" }.to_json,
+        headers: { "Content-Type"=> "application/json" }
+      )
+    end
+
+    let(:car) { ApiBlueprint::Blueprint.new(url: "http://car", creates: Car).run }
+
+    it "initializes an instance of the correct class" do
+      expect(car).to be_a Car
+    end
+
+    it "sets attributes" do
+      expect(car.name).to eq "Ford"
+      expect(car.color).to eq "red"
+    end
+
+    it "returns the response if no `creates` option was passed" do
+      no_car = ApiBlueprint::Blueprint.new(url: "http://car").run
+      expect(no_car).to be_a Faraday::Response
     end
   end
 end
