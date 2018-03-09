@@ -12,7 +12,14 @@ describe ApiBlueprint::Model do
   end
 
   describe "blueprint" do
-    let(:blueprint) { Car.blueprint :post, "/foo", headers: { abc: "123" } }
+    let(:parser) { TestParser.new }
+    let(:blueprint) {
+      Car.blueprint \
+        :post,
+        "/foo",
+        headers: { abc: "123" },
+        parser: parser
+    }
 
     it "returns a blueprint" do
       expect(blueprint).to be_a ApiBlueprint::Blueprint
@@ -30,8 +37,12 @@ describe ApiBlueprint::Model do
       expect(blueprint.creates).to eq Car
     end
 
-    it "passes through any other options" do
+    it "passes through headers" do
       expect(blueprint.headers[:abc]).to eq "123"
+    end
+
+    it "passes through the parser" do
+      expect(blueprint.parser).to eq parser
     end
   end
 end

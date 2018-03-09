@@ -56,12 +56,6 @@ describe ApiBlueprint::Blueprint, "building collections" do
 end
 
 describe ApiBlueprint::Blueprint, "parsers" do
-  class MyParser < ApiBlueprint::Parser
-    def parse(body)
-      body
-    end
-  end
-
   before do
     stub_request(:get, "http://parser").to_return(
       body: { name: "Ford", color: "red" }.to_json,
@@ -70,7 +64,7 @@ describe ApiBlueprint::Blueprint, "parsers" do
   end
 
   let(:body) { { name: "Ford", color: "red" }.with_indifferent_access }
-  let(:parser) { MyParser.new }
+  let(:parser) { TestParser.new }
   let(:blueprint) {
     ApiBlueprint::Blueprint.new(
       url: "http://parser",
