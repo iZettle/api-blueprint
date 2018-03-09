@@ -11,7 +11,7 @@ module ApiBlueprint
     private
 
     def options
-      { headers: self.headers }
+      { headers: headers }
     end
   end
 end

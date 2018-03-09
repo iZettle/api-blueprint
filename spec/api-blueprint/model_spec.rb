@@ -1,5 +1,9 @@
 require "spec_helper"
 
+describe Car do
+  it { should be_kind_of(Dry::Struct) }
+end
+
 describe ApiBlueprint::Model do
   describe "config" do
     it "can set the host for a model" do
