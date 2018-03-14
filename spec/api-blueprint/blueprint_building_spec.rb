@@ -2,22 +2,23 @@ require "spec_helper"
 
 describe ApiBlueprint::Blueprint, "building" do
   before do
+    @options = { "name" => "Ford", "color" => "red" }
+
     stub_request(:get, "http://car").to_return(
       body: { name: "Ford", color: "red" }.to_json,
       headers: { "Content-Type"=> "application/json" }
     )
   end
 
-  let(:options) { { "name" => "Ford", "color" => "red" } }
   let(:blueprint) { ApiBlueprint::Blueprint.new(url: "http://car", creates: Car) }
   let(:builder) {
     double().tap do |double|
-      allow(double).to receive(:build).and_return(Car.new(options))
+      allow(double).to receive(:build).and_return(Car.new(@options))
     end
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(options, {}, Car).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(@options, {}, Car).and_return(builder)
     blueprint.run
   end
 
@@ -29,16 +30,24 @@ end
 
 describe ApiBlueprint::Blueprint, "building collections" do
   before do
+    @options = [{ name: "Ford", color: "red" }.with_indifferent_access, { name: "Tesla", color: "black" }.with_indifferent_access]
+
     stub_request(:get, "http://cars").to_return(
-      body: [{ name: "Ford", color: "red" }, { name: "Tesla", color: "black" }].to_json,
+      body: @options.to_json,
       headers: { "Content-Type"=> "application/json" }
     )
   end
 
-  let(:cars) { ApiBlueprint::Blueprint.new(url: "http://cars", creates: Car).run }
+  let(:blueprint) { ApiBlueprint::Blueprint.new(url: "http://cars", creates: Car) }
+  let(:builder) {
+    double().tap do |double|
+      allow(double).to receive(:build).and_return(@options.collect { |c| Car.new(c) })
+    end
+  }
 
   it "passes the correct arguments to the builder" do
-
+    expect(ApiBlueprint::Builder).to receive(:new).with(@options, {}, Car).and_return(builder)
+    blueprint.run
   end
 
   it "returns the response if no `creates` option was passed" do
