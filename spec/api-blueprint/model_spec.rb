@@ -86,5 +86,10 @@ describe ApiBlueprint::Model do
     it "passes through replacements" do
       expect(blueprint.replacements).to eq replacements
     end
+
+    it "uses the models default replacements" do
+      bp = ConfiguredModel.blueprint :post, "/foo"
+      expect(bp.replacements).to eq({ foo: :bar })
+    end
   end
 end

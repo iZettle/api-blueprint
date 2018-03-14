@@ -13,7 +13,8 @@ module ApiBlueprint
         http_method: http_method,
         url: URI.join(config.host, url).to_s,
         creates: self,
-        parser: config.parser
+        parser: config.parser,
+        replacements: config.replacements
       }.merge(options)
 
       ApiBlueprint::Blueprint.new blueprint_opts
