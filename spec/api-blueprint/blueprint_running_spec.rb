@@ -33,4 +33,29 @@ describe ApiBlueprint::Blueprint, "running" do
     stub_request(:get, "http://foo").with(headers: { hello: "world" })
     ApiBlueprint::Blueprint.new(url: "http://foo", headers: { hello: "world" }).run
   end
+
+  it "sends overridden headers" do
+    stub_request(:get, "http://foo").with(headers: { hello: "world" })
+    ApiBlueprint::Blueprint.new(url: "http://foo", headers: { hello: "ksdjksjdj" }).run(headers: { hello: "world" })
+  end
+
+  it "merges headers with overrides" do
+    stub_request(:get, "http://foo").with(headers: { hello: "world", foo: "bar" })
+    ApiBlueprint::Blueprint.new(url: "http://foo", headers: { foo: "bar" }).run(headers: { hello: "world" })
+  end
+
+  it "sends GET params" do
+    stub_request(:get, "http://web/foo?foo=bar")
+    ApiBlueprint::Blueprint.new(url: "http://web/foo", params: { foo: "bar" }).run
+  end
+
+  it "sends overridden GET params" do
+    stub_request(:get, "http://web/foo?foo=bar")
+    ApiBlueprint::Blueprint.new(url: "http://web/foo", params: { foo: "ksjdksjd" }).run(params: { foo: "bar" })
+  end
+
+  it "merges params with overrides" do
+    stub_request(:get, "http://web/foo?hello=world&foo=bar")
+    ApiBlueprint::Blueprint.new(url: "http://web/foo", params: { hello: "world" }).run(params: { foo: "bar" })
+  end
 end

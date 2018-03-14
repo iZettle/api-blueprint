@@ -5,18 +5,20 @@ module ApiBlueprint
     attribute :http_method, Types::Symbol.default(:get).enum(*Faraday::Connection::METHODS)
     attribute :url, Types::String
     attribute :headers, Types::Hash.optional.default(Hash.new)
+    attribute :params, Types::Hash.optional.default(Hash.new)
     attribute :creates, Types::Any
     attribute :parser, Types.Instance(ApiBlueprint::Parser).default(ApiBlueprint::Parser.new)
     attribute :replacements, Types::Hash.default(Hash.new)
 
-    def run(runner_options = {})
+    def run(options = {})
       response = connection.send http_method do |req|
         req.url url
-        req.headers.merge! runner_options.fetch(:headers, {}).merge(headers)
+        req.headers.merge! headers.merge options.fetch(:headers, {})
+        req.params = params.merge options.fetch(:params, {})
       end
 
       if creates.present?
-        body = parser.parse(response.body)
+        body = parser.parse response.body
         ApiBlueprint::Builder.new(body, replacements, creates).build
       else
         response
