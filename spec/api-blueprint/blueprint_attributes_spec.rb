@@ -43,10 +43,10 @@ describe ApiBlueprint::Blueprint, "attributes" do
     end
   end
 
-  describe "response_key_replacements" do
+  describe "replacements" do
     it "defaults to an empty hash" do
       blueprint = ApiBlueprint::Blueprint.new
-      expect(blueprint.response_key_replacements).to eq Hash.new
+      expect(blueprint.replacements).to eq Hash.new
     end
   end
 end

@@ -4,7 +4,7 @@ class Car < ApiBlueprint::Model
 
   configure do |config|
     config.host = "http://my-api.com"
-    config.response_key_replacements = {
+    config.replacements = {
       colour: :color 
     }
   end

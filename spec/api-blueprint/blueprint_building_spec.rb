@@ -11,7 +11,7 @@ describe ApiBlueprint::Blueprint, "building" do
   end
 
   let(:blueprint) { ApiBlueprint::Blueprint.new(url: "http://car", creates: Car) }
-  let(:blueprint_with_replacements) { ApiBlueprint::Blueprint.new(url: "http://car", creates: Car, response_key_replacements: { foo: :bar }) }
+  let(:blueprint_with_replacements) { ApiBlueprint::Blueprint.new(url: "http://car", creates: Car, replacements: { foo: :bar }) }
   let(:builder) {
     double().tap do |double|
       allow(double).to receive(:build).and_return(Car.new(@options))
@@ -23,7 +23,7 @@ describe ApiBlueprint::Blueprint, "building" do
     blueprint.run
   end
 
-  it "passes response_key_replacements to the builder" do
+  it "passes replacements to the builder" do
     expect(ApiBlueprint::Builder).to receive(:new).with(@options, { foo: :bar }, Car).and_return(builder)
     blueprint_with_replacements.run
   end

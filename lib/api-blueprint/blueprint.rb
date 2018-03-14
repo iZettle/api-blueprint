@@ -7,7 +7,7 @@ module ApiBlueprint
     attribute :headers, Types::Hash.optional.default(Hash.new)
     attribute :creates, Types::Any
     attribute :parser, Types.Instance(ApiBlueprint::Parser).default(ApiBlueprint::Parser.new)
-    attribute :response_key_replacements, Types::Hash.default(Hash.new)
+    attribute :replacements, Types::Hash.default(Hash.new)
 
     def run(runner_options = {})
       response = connection.send http_method do |req|
@@ -17,7 +17,7 @@ module ApiBlueprint
 
       if creates.present?
         body = parser.parse(response.body)
-        ApiBlueprint::Builder.new(body, response_key_replacements, creates).build
+        ApiBlueprint::Builder.new(body, replacements, creates).build
       else
         response
       end
