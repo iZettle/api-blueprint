@@ -5,7 +5,7 @@ end
 
 class ConfiguredModel < ApiBlueprint::Model
   configure do |config|
-    config.host = "foobar.com"
+    config.host = "http://foobar.com"
     config.parser = nil
     config.replacements = { foo: :bar }
   end
@@ -22,7 +22,7 @@ describe ApiBlueprint::Model do
     end
 
     it "is possible to set the host" do
-      expect(ConfiguredModel.config.host).to eq "foobar.com"
+      expect(ConfiguredModel.config.host).to eq "http://foobar.com"
     end
 
     it "should set the default parser to be an ApiBlueprint::Parser" do
@@ -46,7 +46,7 @@ describe ApiBlueprint::Model do
     let(:parser) { TestParser.new }
     let(:replacements) { { someReplacement: :some_replacement } }
     let(:blueprint) {
-      Car.blueprint \
+      ConfiguredModel.blueprint \
         :post,
         "/foo",
         headers: { abc: "123" },
@@ -59,7 +59,12 @@ describe ApiBlueprint::Model do
     end
 
     it "sets the blueprint url from the model's host and url combined" do
-      expect(blueprint.url).to eq "http://car/foo"
+      expect(blueprint.url).to eq "http://foobar.com/foo"
+    end
+
+    it "overrides the url of the original if they both define a full url" do
+      override = ConfiguredModel.blueprint :get, "http://anotherdomain.com/foo"
+      expect(override.url).to eq "http://anotherdomain.com/foo"
     end
 
     it "sets the blueprint's http_method" do
@@ -67,7 +72,7 @@ describe ApiBlueprint::Model do
     end
 
     it "tells the blueprint to build self" do
-      expect(blueprint.creates).to eq Car
+      expect(blueprint.creates).to eq ConfiguredModel
     end
 
     it "passes through headers" do
