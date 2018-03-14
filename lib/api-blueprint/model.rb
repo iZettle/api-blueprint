@@ -6,6 +6,7 @@ module ApiBlueprint
 
     setting :host, ""
     setting :parser, ApiBlueprint::Parser.new
+    # setting :response_key_replacements, {}
 
     def self.blueprint(http_method, url, options = {})
       blueprint_opts = {

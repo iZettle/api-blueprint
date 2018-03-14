@@ -7,6 +7,7 @@ module ApiBlueprint
     attribute :headers, Types::Hash.optional.default(Hash.new)
     attribute :creates, Types::Any
     attribute :parser, Types.Instance(ApiBlueprint::Parser).default(ApiBlueprint::Parser.new)
+    attribute :response_key_replacements, Types::Hash.default(Hash.new)
 
     def run(runner_options = {})
       response = connection.send http_method do |req|
@@ -15,7 +16,8 @@ module ApiBlueprint
       end
 
       if creates.present?
-        build_objects parser.parse(response.body)
+        body = parser.parse(response.body)
+        ApiBlueprint::Builder.new(body, response_key_replacements, creates).build
       else
         response
       end
@@ -31,14 +33,6 @@ module ApiBlueprint
         conn.headers = {
           "User-Agent": "ApiBlueprint"
         }
-      end
-    end
-
-    def build_objects(body)
-      if body.is_a? Array
-        body.collect { |item| creates.new item.with_indifferent_access }
-      else
-        creates.new body.with_indifferent_access
       end
     end
 

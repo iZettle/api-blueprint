@@ -6,6 +6,7 @@ require 'faraday_middleware'
 
 require 'api-blueprint/types'
 require 'api-blueprint/parser'
+require 'api-blueprint/builder'
 require 'api-blueprint/model'
 require 'api-blueprint/blueprint'
 require 'api-blueprint/runner'

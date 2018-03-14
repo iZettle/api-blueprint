@@ -8,20 +8,22 @@ describe ApiBlueprint::Blueprint, "building" do
     )
   end
 
-  let(:car) { ApiBlueprint::Blueprint.new(url: "http://car", creates: Car).run }
+  let(:options) { { "name" => "Ford", "color" => "red" } }
+  let(:blueprint) { ApiBlueprint::Blueprint.new(url: "http://car", creates: Car) }
+  let(:builder) {
+    double().tap do |double|
+      allow(double).to receive(:build).and_return(Car.new(options))
+    end
+  }
 
-  it "initializes an instance of the correct class" do
-    expect(car).to be_a Car
-  end
-
-  it "sets attributes" do
-    expect(car.name).to eq "Ford"
-    expect(car.color).to eq "red"
+  it "passes the correct arguments to the builder" do
+    expect(ApiBlueprint::Builder).to receive(:new).with(options, {}, Car).and_return(builder)
+    blueprint.run
   end
 
   it "returns the response if no `creates` option was passed" do
-    no_car = ApiBlueprint::Blueprint.new(url: "http://car").run
-    expect(no_car).to be_a Faraday::Response
+    no_creates = ApiBlueprint::Blueprint.new(url: "http://car")
+    expect(no_creates.run).to be_a Faraday::Response
   end
 end
 
@@ -35,18 +37,8 @@ describe ApiBlueprint::Blueprint, "building collections" do
 
   let(:cars) { ApiBlueprint::Blueprint.new(url: "http://cars", creates: Car).run }
 
-  it "returns an array" do
-    expect(cars).to be_a Array
-    expect(cars.length).to eq 2
-  end
+  it "passes the correct arguments to the builder" do
 
-  it "initializes the correct classes" do
-    expect(cars).to all(be_a(Car))
-  end
-
-  it "sets the attributes on each item correctly" do
-    expect(cars[0].name).to eq "Ford"
-    expect(cars[1].name).to eq "Tesla"
   end
 
   it "returns the response if no `creates` option was passed" do
