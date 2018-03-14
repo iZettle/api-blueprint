@@ -9,6 +9,7 @@ module ApiBlueprint
     attribute :creates, Types::Any
     attribute :parser, Types.Instance(ApiBlueprint::Parser).default(ApiBlueprint::Parser.new)
     attribute :replacements, Types::Hash.default(Hash.new)
+    attribute :after_build, Types::Any
 
     def run(options = {})
       response = connection.send http_method do |req|
@@ -19,10 +20,12 @@ module ApiBlueprint
 
       if creates.present?
         body = parser.parse response.body
-        ApiBlueprint::Builder.new(body, replacements, creates).build
+        final = ApiBlueprint::Builder.new(body, replacements, creates).build
       else
-        response
+        final = response
       end
+
+      after_build.present? ? after_build.call(final) : final
     end
 
     private
@@ -30,6 +33,7 @@ module ApiBlueprint
     def connection
       Faraday.new do |conn|
         conn.response :json, content_type: /\bjson$/
+        # conn.response :logger
 
         conn.adapter Faraday.default_adapter
         conn.headers = {

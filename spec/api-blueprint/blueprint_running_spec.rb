@@ -58,4 +58,12 @@ describe ApiBlueprint::Blueprint, "running" do
     stub_request(:get, "http://web/foo?hello=world&foo=bar")
     ApiBlueprint::Blueprint.new(url: "http://web/foo", params: { hello: "world" }).run(params: { foo: "bar" })
   end
+
+  it "runs an after_build block if provided" do
+    stub_request(:get, "http://web/foo")
+    duck = double()
+    expect(duck).to receive(:quack)
+    after_build = -> (response) { duck.quack }
+    ApiBlueprint::Blueprint.new(url: "http://web/foo", after_build: after_build).run
+  end
 end

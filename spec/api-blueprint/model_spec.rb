@@ -91,5 +91,12 @@ describe ApiBlueprint::Model do
       bp = ConfiguredModel.blueprint :post, "/foo"
       expect(bp.replacements).to eq({ foo: :bar })
     end
+
+    it "passes a block to the blueprint as after_build" do
+      bp = ConfiguredModel.blueprint :post, "/foo" do
+        "Hello"
+      end
+      expect(bp.after_build.call).to eq "Hello"
+    end
   end
 end
