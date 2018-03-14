@@ -11,11 +11,13 @@ module ApiBlueprint
 
     def build
       if body.is_a? Array
-        body.collect { |item| creates.new item.with_indifferent_access }
+        body.collect { |item| creates.new with_replacements(item) }
       else
-        creates.new body.with_indifferent_access
+        creates.new with_replacements(body)
       end
     end
+
+    private
 
     def with_replacements(hsh)
       hsh.with_indifferent_access.tap do |item|

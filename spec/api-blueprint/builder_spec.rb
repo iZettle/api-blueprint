@@ -34,3 +34,14 @@ describe ApiBlueprint::Builder, "building collections" do
     expect(cars[1].name).to eq "Tesla"
   end
 end
+
+describe ApiBlueprint::Builder, "replacements" do
+  let(:replacements) { { carName: :name, colour: :color } }
+  let(:body) { { carName: "VW Camper", colour: "Blue" } }
+  let(:car) { ApiBlueprint::Builder.new(body, replacements, Car).build }
+
+  it "should set the correct key from a replacement key" do
+    expect(car.name).to eq body[:carName]
+    expect(car.color).to eq body[:colour]
+  end
+end
