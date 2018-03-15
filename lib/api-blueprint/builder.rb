@@ -1,13 +1,10 @@
 module ApiBlueprint
-  class Builder
+  class Builder < Dry::Struct
+    constructor_type :schema
 
-    attr_reader :body, :replacements, :creates
-
-    def initialize(body, replacements, creates)
-      @body = body
-      @replacements = replacements
-      @creates = creates
-    end
+    attribute :body, Types::Hash.default(Hash.new)
+    attribute :replacements, Types::Hash.default(Hash.new)
+    attribute :creates, Types::Any
 
     def build
       if body.is_a? Array

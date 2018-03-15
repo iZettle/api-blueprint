@@ -1,5 +1,8 @@
 require "spec_helper"
 
+class CustomBuilder < ApiBlueprint::Builder
+end
+
 describe ApiBlueprint::Blueprint, "building" do
   before do
     @options = { "name" => "Ford", "color" => "red" }
@@ -19,18 +22,26 @@ describe ApiBlueprint::Blueprint, "building" do
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(@options, {}, Car).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car).and_return(builder)
     blueprint.run
   end
 
   it "passes replacements to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(@options, { foo: :bar }, Car).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: { foo: :bar }, creates: Car).and_return(builder)
     blueprint_with_replacements.run
   end
 
   it "returns the response if no `creates` option was passed" do
     no_creates = ApiBlueprint::Blueprint.new(url: "http://car")
     expect(no_creates.run).to be_a Faraday::Response
+  end
+
+  it "uses a custom builder when provided" do
+    custom_builder = CustomBuilder.new
+    bp2 = blueprint.new builder: custom_builder
+    # expect(custom_builder).to receive(:new).and_return(custom_builder.new({}))
+    expect(custom_builder).to receive_message_chain(:new, :build)
+    bp2.run
   end
 end
 
@@ -52,7 +63,7 @@ describe ApiBlueprint::Blueprint, "building collections" do
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(@options, {}, Car).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car).and_return(builder)
     blueprint.run
   end
 

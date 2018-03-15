@@ -1,5 +1,8 @@
 require "spec_helper"
 
+class NewBuilder < ApiBlueprint::Builder
+end
+
 describe ApiBlueprint::Blueprint, "attributes" do
   describe "http_method" do
     it "should be an acceptable http verb from Faraday::Connection::METHODS" do
@@ -47,6 +50,25 @@ describe ApiBlueprint::Blueprint, "attributes" do
     it "defaults to an empty hash" do
       blueprint = ApiBlueprint::Blueprint.new
       expect(blueprint.replacements).to eq Hash.new
+    end
+  end
+
+  describe "builder" do
+    it "defaults to a new ApiBlueprint::Builder instance" do
+      blueprint = ApiBlueprint::Blueprint.new
+      expect(blueprint.builder).to be_a ApiBlueprint::Builder
+    end
+
+    it "can be set to a new instance of a Builder" do
+      builder = NewBuilder.new
+      blueprint = ApiBlueprint::Blueprint.new builder: builder
+      expect(blueprint.builder).to eq builder
+    end
+
+    it "cannot be a class which doesn't inherit from Builder" do
+      expect {
+        ApiBlueprint::Blueprint.new builder: "Hi"
+      }.to raise_exception(Dry::Struct::Error)
     end
   end
 end
