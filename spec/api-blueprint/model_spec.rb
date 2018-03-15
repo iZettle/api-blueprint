@@ -1,5 +1,8 @@
 require "spec_helper"
 
+class CustomBuilder < ApiBlueprint::Builder
+end
+
 class PlainModel < ApiBlueprint::Model
 end
 
@@ -7,6 +10,7 @@ class ConfiguredModel < ApiBlueprint::Model
   configure do |config|
     config.host = "http://foobar.com"
     config.parser = nil
+    config.builder = CustomBuilder.new
     config.replacements = { foo: :bar }
   end
 end
@@ -33,6 +37,10 @@ describe ApiBlueprint::Model do
       expect(ConfiguredModel.config.parser).to be_nil
     end
 
+    it "is possible to set the builder" do
+      expect(ConfiguredModel.config.builder).to be_a CustomBuilder
+    end
+
     it "should set the default replacements to be an empty hash" do
       expect(PlainModel.config.replacements).to eq Hash.new
     end
@@ -44,6 +52,7 @@ describe ApiBlueprint::Model do
 
   describe "blueprint" do
     let(:parser) { TestParser.new }
+    let(:builder) { CustomBuilder.new }
     let(:replacements) { { someReplacement: :some_replacement } }
     let(:blueprint) {
       ConfiguredModel.blueprint \
@@ -51,7 +60,8 @@ describe ApiBlueprint::Model do
         "/foo",
         headers: { abc: "123" },
         parser: parser,
-        replacements: replacements
+        replacements: replacements,
+        builder: builder
     }
 
     it "returns a blueprint" do
@@ -83,6 +93,10 @@ describe ApiBlueprint::Model do
       expect(blueprint.parser).to eq parser
     end
 
+    it "passes through the builder" do
+      expect(blueprint.builder).to eq builder
+    end
+
     it "passes through replacements" do
       expect(blueprint.replacements).to eq replacements
     end
@@ -98,5 +112,10 @@ describe ApiBlueprint::Model do
       end
       expect(bp.after_build.call).to eq "Hello"
     end
+  end
+
+  it "passes the builder from the model config" do
+    bp = ConfiguredModel.blueprint :get, "/foo"
+    expect(bp.builder).to be_a CustomBuilder
   end
 end

@@ -6,6 +6,7 @@ module ApiBlueprint
 
     setting :host, ""
     setting :parser, ApiBlueprint::Parser.new
+    setting :builder, ApiBlueprint::Builder.new
     setting :replacements, {}
 
     def self.blueprint(http_method, url, options = {}, &block)
@@ -14,7 +15,8 @@ module ApiBlueprint
         url: URI.join(config.host, url).to_s,
         creates: self,
         parser: config.parser,
-        replacements: config.replacements
+        replacements: config.replacements,
+        builder: config.builder
       }.merge(options)
 
       if block_given?
