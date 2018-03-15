@@ -8,20 +8,24 @@ module ApiBlueprint
 
     def build
       if body.is_a? Array
-        body.collect &method(:build_item)
+        body.collect { |item| build_item prepare_item(item) }
       else
-        build_item body
+        build_item prepare_item(body)
       end
     end
 
+    def prepare_item(item)
+      with_replacements item.with_indifferent_access
+    end
+
     def build_item(item)
-      creates.new with_replacements(item)
+      creates.new item
     end
 
     private
 
-    def with_replacements(hsh)
-      hsh.with_indifferent_access.tap do |item|
+    def with_replacements(item)
+      item.tap do |item|
         replacements.each do |bad, good|
           item[good] = item.delete bad if item.has_key? bad
         end
