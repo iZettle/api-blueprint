@@ -39,7 +39,6 @@ describe ApiBlueprint::Blueprint, "building" do
   it "uses a custom builder when provided" do
     custom_builder = CustomBuilder.new
     bp2 = blueprint.new builder: custom_builder
-    # expect(custom_builder).to receive(:new).and_return(custom_builder.new({}))
     expect(custom_builder).to receive_message_chain(:new, :build)
     bp2.run
   end
