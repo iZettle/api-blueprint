@@ -8,10 +8,14 @@ module ApiBlueprint
 
     def build
       if body.is_a? Array
-        body.collect { |item| creates.new with_replacements(item) }
+        body.collect &method(:build_item)
       else
-        creates.new with_replacements(body)
+        build_item body
       end
+    end
+
+    def build_item(item)
+      creates.new with_replacements(item)
     end
 
     private
