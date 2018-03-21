@@ -6,6 +6,8 @@ module ApiBlueprint
     attribute :replacements, Types::Hash.default(Hash.new)
     attribute :creates, Types::Any
 
+    attr_writer :body
+
     def build
       if body.is_a? Array
         body.collect { |item| build_item prepare_item(item) }
