@@ -1,6 +1,11 @@
 module ApiBlueprint
   class Model < Dry::Struct
     extend Dry::Configurable
+    include ActiveModel::Conversion
+    include ActiveModel::Validations
+    include ActiveModel::Serialization
+    extend ActiveModel::Naming
+    extend ActiveModel::Callbacks
 
     constructor_type :schema
 
@@ -12,7 +17,7 @@ module ApiBlueprint
     def self.blueprint(http_method, url, options = {}, &block)
       blueprint_opts = {
         http_method: http_method,
-        url: URI.join(config.host, url).to_s,
+        url: ApiBlueprint::Url.new(config.host, url).to_s,
         creates: self,
         parser: config.parser,
         replacements: config.replacements,

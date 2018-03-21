@@ -16,14 +16,16 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  s.add_dependency "rails", "~> 5.1.5"
   s.add_dependency "dry-types"
   s.add_dependency "dry-struct"
   s.add_dependency "dry-initializer"
   s.add_dependency "dry-configurable"
   s.add_dependency "faraday"
   s.add_dependency "faraday_middleware"
+  s.add_dependency "activemodel"
+  s.add_dependency "addressable"
 
+  s.add_development_dependency "rails", "~> 5.1.5"
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "pry"
   s.add_development_dependency "rspec"

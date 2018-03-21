@@ -68,13 +68,16 @@ describe ApiBlueprint::Model do
       expect(blueprint).to be_a ApiBlueprint::Blueprint
     end
 
-    it "sets the blueprint url from the model's host and url combined" do
-      expect(blueprint.url).to eq "http://foobar.com/foo"
+    it "passes host and url params to the url builder" do
+      expect(ApiBlueprint::Url).to receive(:new).with("http://foobar.com", "/foo")
+      blueprint
     end
 
-    it "overrides the url of the original if they both define a full url" do
-      override = ConfiguredModel.blueprint :get, "http://anotherdomain.com/foo"
-      expect(override.url).to eq "http://anotherdomain.com/foo"
+    it "gets the url as a string" do
+      url = ApiBlueprint::Url.new "http://foobar.com", "/foo"
+      expect(ApiBlueprint::Url).to receive(:new).and_return url
+      expect(url).to receive(:to_s).and_return "http://foobar.com/foo"
+      expect(blueprint.url).to eq "http://foobar.com/foo"
     end
 
     it "sets the blueprint's http_method" do
