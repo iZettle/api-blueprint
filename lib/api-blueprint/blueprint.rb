@@ -12,7 +12,7 @@ module ApiBlueprint
     attribute :after_build, Types::Any
     attribute :builder, Types.Instance(ApiBlueprint::Builder).default(ApiBlueprint::Builder.new)
 
-    def run(options = {})
+    def run(options = {}, runner = nil)
       response = connection.send http_method do |req|
         req.url url
         req.headers.merge! headers.merge options.fetch(:headers, {})
@@ -26,7 +26,7 @@ module ApiBlueprint
         final = response
       end
 
-      after_build.present? ? after_build.call(final) : final
+      after_build.present? ? after_build.call(runner, final) : final
     end
 
     private

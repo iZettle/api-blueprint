@@ -5,7 +5,7 @@ module ApiBlueprint
     option :headers, default: proc { {} }
 
     def run(blueprint)
-      blueprint.run options
+      blueprint.run options, self
     end
 
     private

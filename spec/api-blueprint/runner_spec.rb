@@ -33,7 +33,7 @@ describe ApiBlueprint::Runner do
     end
 
     it "passes along headers" do
-      expect(blueprint).to receive(:run).with(options).and_return(true)
+      expect(blueprint).to receive(:run).with(options, runner).and_return(true)
       runner.run(blueprint)
     end
   end

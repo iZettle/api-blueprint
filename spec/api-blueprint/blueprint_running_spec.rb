@@ -63,7 +63,7 @@ describe ApiBlueprint::Blueprint, "running" do
     stub_request(:get, "http://web/foo")
     duck = double()
     expect(duck).to receive(:quack)
-    after_build = -> (response) { duck.quack }
+    after_build = -> (_, response) { duck.quack }
     ApiBlueprint::Blueprint.new(url: "http://web/foo", after_build: after_build).run
   end
 end
