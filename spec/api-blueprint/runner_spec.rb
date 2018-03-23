@@ -26,15 +26,39 @@ describe ApiBlueprint::Runner do
         }
       )
     end
-
-    it "calls the run method on the blueprint" do
-      expect(blueprint).to receive(:run).and_return(true)
-      runner.run(blueprint)
+    let(:second_blueprint) do
+      ApiBlueprint::Blueprint.new http_method: :get, url: "http://httpbin.org/anything"
+    end
+    let(:collection) do
+      ApiBlueprint::Collection.new first: blueprint, second: second_blueprint
     end
 
-    it "passes along headers" do
-      expect(blueprint).to receive(:run).with(options, runner).and_return(true)
-      runner.run(blueprint)
+    context "when passed a blueprint" do
+      it "calls the run method on the blueprint" do
+        expect(blueprint).to receive(:run).and_return(true)
+        runner.run(blueprint)
+      end
+
+      it "passes along headers" do
+        expect(blueprint).to receive(:run).with(options, runner).and_return(true)
+        runner.run(blueprint)
+      end
+    end
+
+    context "when passed a collection" do
+      it "calls the run method on each blueprint" do
+        expect(blueprint).to receive(:run).and_return(true)
+        expect(second_blueprint).to receive(:run).and_return(true)
+        runner.run(collection)
+      end
+    end
+
+    context "when passed something other than a blueprint or collection" do
+      it "raises an error" do
+        expect {
+          runner.run "foo"
+        }.to raise_error(ArgumentError)
+      end
     end
   end
 

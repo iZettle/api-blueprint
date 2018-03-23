@@ -7,6 +7,8 @@ class PlainModel < ApiBlueprint::Model
 end
 
 class ConfiguredModel < ApiBlueprint::Model
+  attribute :foo, Types::Any
+
   configure do |config|
     config.host = "http://foobar.com"
     config.parser = nil
@@ -20,6 +22,22 @@ describe PlainModel do
 end
 
 describe ApiBlueprint::Model do
+  let(:parser) { TestParser.new }
+  let(:builder) { CustomBuilder.new }
+  let(:replacements) { { someReplacement: :some_replacement } }
+  let(:blueprint) do
+    ConfiguredModel.blueprint \
+      :post,
+      "/foo",
+      headers: { abc: "123" },
+      parser: parser,
+      replacements: replacements,
+      builder: builder
+  end
+  let(:collection) do
+    ConfiguredModel.collection foo: blueprint
+  end
+
   describe "config" do
     it "should set the default host to be a blank string" do
       expect(PlainModel.config.host).to eq ""
@@ -50,20 +68,7 @@ describe ApiBlueprint::Model do
     end
   end
 
-  describe "blueprint" do
-    let(:parser) { TestParser.new }
-    let(:builder) { CustomBuilder.new }
-    let(:replacements) { { someReplacement: :some_replacement } }
-    let(:blueprint) {
-      ConfiguredModel.blueprint \
-        :post,
-        "/foo",
-        headers: { abc: "123" },
-        parser: parser,
-        replacements: replacements,
-        builder: builder
-    }
-
+  describe ".blueprint" do
     it "returns a blueprint" do
       expect(blueprint).to be_a ApiBlueprint::Blueprint
     end
@@ -120,5 +125,11 @@ describe ApiBlueprint::Model do
   it "passes the builder from the model config" do
     bp = ConfiguredModel.blueprint :get, "/foo"
     expect(bp.builder).to be_a CustomBuilder
+  end
+
+  describe ".collection" do
+    it "initializes an ApiBlueprint::Collection" do
+      expect(collection).to be_a ApiBlueprint::Collection
+    end
   end
 end

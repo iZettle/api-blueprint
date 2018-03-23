@@ -5,7 +5,11 @@ module ApiBlueprint
     option :headers, default: proc { {} }
 
     def run(blueprint)
-      blueprint.run options, self
+      if blueprint.is_a?(Blueprint) || blueprint.is_a?(Collection)
+        blueprint.run options, self
+      else
+        raise ArgumentError, "expected a blueprint or blueprint collection, got #{blueprint.class}"
+      end
     end
 
     private

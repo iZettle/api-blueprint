@@ -13,6 +13,8 @@ require 'api-blueprint/builder'
 require 'api-blueprint/model'
 require 'api-blueprint/blueprint'
 require 'api-blueprint/runner'
+require 'api-blueprint/collection'
 
 module ApiBlueprint
+  class DefinitionError < StandardError; end
 end

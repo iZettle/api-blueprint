@@ -10,14 +10,14 @@ module ApiBlueprint
     constructor_type :schema
 
     setting :host, ""
-    setting :parser, ApiBlueprint::Parser.new
-    setting :builder, ApiBlueprint::Builder.new
+    setting :parser, Parser.new
+    setting :builder, Builder.new
     setting :replacements, {}
 
     def self.blueprint(http_method, url, options = {}, &block)
       blueprint_opts = {
         http_method: http_method,
-        url: ApiBlueprint::Url.new(config.host, url).to_s,
+        url: Url.new(config.host, url).to_s,
         creates: self,
         parser: config.parser,
         replacements: config.replacements,
@@ -28,7 +28,12 @@ module ApiBlueprint
         blueprint_opts[:after_build] = block
       end
 
-      ApiBlueprint::Blueprint.new blueprint_opts
+      Blueprint.new blueprint_opts
     end
+
+    def self.collection(blueprints)
+      Collection.new blueprints, self
+    end
+
   end
 end
