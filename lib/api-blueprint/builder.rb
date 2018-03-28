@@ -3,6 +3,7 @@ module ApiBlueprint
     constructor_type :schema
 
     attribute :body, Types::Hash.default(Hash.new)
+    attribute :headers, Types::Hash.default(Hash.new)
     attribute :replacements, Types::Hash.default(Hash.new)
     attribute :creates, Types::Any
 

@@ -6,10 +6,11 @@ end
 describe ApiBlueprint::Blueprint, "building" do
   before do
     @options = { "name" => "Ford", "color" => "red" }
+    @headers = { "Content-Type"=> "application/json", "Some-Header" => "is-included!" }
 
     stub_request(:get, "http://car").to_return(
       body: { name: "Ford", color: "red" }.to_json,
-      headers: { "Content-Type"=> "application/json" }
+      headers: @headers
     )
   end
 
@@ -22,12 +23,12 @@ describe ApiBlueprint::Blueprint, "building" do
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers).and_return(builder)
     blueprint.run
   end
 
   it "passes replacements to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: { foo: :bar }, creates: Car).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: { foo: :bar }, creates: Car, headers: @headers).and_return(builder)
     blueprint_with_replacements.run
   end
 
@@ -47,10 +48,11 @@ end
 describe ApiBlueprint::Blueprint, "building collections" do
   before do
     @options = [{ name: "Ford", color: "red" }.with_indifferent_access, { name: "Tesla", color: "black" }.with_indifferent_access]
+    @headers = { "Content-Type"=> "application/json" }
 
     stub_request(:get, "http://cars").to_return(
       body: @options.to_json,
-      headers: { "Content-Type"=> "application/json" }
+      headers: @headers
     )
   end
 
@@ -62,7 +64,7 @@ describe ApiBlueprint::Blueprint, "building collections" do
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers).and_return(builder)
     blueprint.run
   end
 

@@ -20,8 +20,14 @@ module ApiBlueprint
       end
 
       if creates.present?
-        body = parser.parse response.body
-        final = builder.new(body: body, replacements: replacements, creates: creates).build
+        builder_options = {
+          body: parser.parse(response.body),
+          headers: response.headers,
+          replacements: replacements,
+          creates: creates
+        }
+
+        final = builder.new(builder_options).build
       else
         final = response
       end
