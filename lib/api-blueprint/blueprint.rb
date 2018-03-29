@@ -11,7 +11,6 @@ module ApiBlueprint
     attribute :replacements, Types::Hash.default(Hash.new)
     attribute :after_build, Types::Any
     attribute :builder, Types.Instance(ApiBlueprint::Builder).default(ApiBlueprint::Builder.new)
-    attribute :cache, Types.Instance(ApiBlueprint::Cache).default(ApiBlueprint::Cache.new(key: "global"))
 
     def run(options = {}, runner = nil)
       request_options = {
@@ -21,8 +20,10 @@ module ApiBlueprint
         params: params.merge(options.fetch(:params, {}))
       }
 
-      cache_data = cache.read request_options
-      return cache_data if cache_data.present?
+      if runner&.cache&.present?
+        cache_data = runner.cache.read request_options
+        return cache_data if cache_data.present?
+      end
 
       response = call_api request_options
 
@@ -40,7 +41,8 @@ module ApiBlueprint
       end
 
       final = after_build.present? ? after_build.call(runner, created) : created
-      cache.write final, request_options
+      runner.cache.write final, request_options if runner&.cache&.present?
+      final
     end
 
     private

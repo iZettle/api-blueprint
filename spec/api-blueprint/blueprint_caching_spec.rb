@@ -6,9 +6,10 @@ end
 
 describe ApiBlueprint::Blueprint, "caching" do
   let(:cache) { ApiBlueprint::Cache.new key: "test" }
+  let(:runner) { ApiBlueprint::Runner.new cache: cache }
 
   context "when there is data in the cache" do
-    let(:blueprint) { ApiBlueprint::Blueprint.new url: "http://cache", cache: cache }
+    let(:blueprint) { ApiBlueprint::Blueprint.new url: "http://cache" }
     let(:request_options) do
       {
         http_method: :get,
@@ -20,12 +21,12 @@ describe ApiBlueprint::Blueprint, "caching" do
 
     it "passes the url and other options used from the request" do
       expect(cache).to receive(:read).with(request_options).and_return "cached data"
-      blueprint.run
+      blueprint.run({}, runner)
     end
 
     it "returns the cached data" do
       allow(cache).to receive(:read).with(request_options).and_return "cached data"
-      expect(blueprint.run).to eq "cached data"
+      expect(blueprint.run({}, runner)).to eq "cached data"
     end
   end
 
@@ -47,13 +48,13 @@ describe ApiBlueprint::Blueprint, "caching" do
     end
 
     it "calls the api" do
-      blueprint.run
+      blueprint.run({}, runner)
       expect(@stub).to have_been_requested
     end
 
     it "tries to write the data in the cache" do
       expect(cache).to receive(:write).with(TestModel.new(name: "FooBar"), request_options)
-      blueprint.run
+      blueprint.run({}, runner)
     end
   end
 end
