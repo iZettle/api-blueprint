@@ -6,6 +6,7 @@ require 'faraday_middleware'
 require 'active_model'
 require 'addressable'
 
+require 'api-blueprint/cache'
 require 'api-blueprint/types'
 require 'api-blueprint/url'
 require 'api-blueprint/parser'

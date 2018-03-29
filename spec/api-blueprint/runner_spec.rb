@@ -15,8 +15,7 @@ describe ApiBlueprint::Runner do
   end
 
   describe "run" do
-    let(:options) { { headers: { foo: "bar" }} }
-    let(:runner) { ApiBlueprint::Runner.new options }
+    let(:runner) { ApiBlueprint::Runner.new headers: { foo: "bar" } }
     let(:blueprint) do
       ApiBlueprint::Blueprint.new(
         http_method: :get,
@@ -39,8 +38,8 @@ describe ApiBlueprint::Runner do
         runner.run(blueprint)
       end
 
-      it "passes along headers" do
-        expect(blueprint).to receive(:run).with(options, runner).and_return(true)
+      it "passes along headers and the cache" do
+        expect(blueprint).to receive(:run).with({ headers: runner.headers, cache: runner.cache }, runner).and_return(true)
         runner.run(blueprint)
       end
     end

@@ -3,6 +3,7 @@ module ApiBlueprint
     extend Dry::Initializer
 
     option :headers, default: proc { {} }
+    option :cache, default: proc { Cache.new key: "global" }
 
     def run(blueprint)
       if blueprint.is_a?(Blueprint) || blueprint.is_a?(Collection)
@@ -15,7 +16,7 @@ module ApiBlueprint
     private
 
     def options
-      { headers: headers }
+      { headers: headers, cache: cache }
     end
   end
 end
