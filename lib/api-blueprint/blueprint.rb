@@ -9,8 +9,9 @@ module ApiBlueprint
     attribute :creates, Types::Any
     attribute :parser, Types.Instance(ApiBlueprint::Parser).default(ApiBlueprint::Parser.new)
     attribute :replacements, Types::Hash.default(Hash.new)
-    attribute :after_build, Types::Any
+    attribute :after_build, Types::Instance(Proc).optional
     attribute :builder, Types.Instance(ApiBlueprint::Builder).default(ApiBlueprint::Builder.new)
+    # attribute :ttl, Types.Instance(ActiveSupport::Duration).optional
 
     def run(options = {}, runner = nil)
       request_options = {
