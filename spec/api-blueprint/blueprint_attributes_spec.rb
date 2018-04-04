@@ -122,21 +122,4 @@ describe ApiBlueprint::Blueprint, "attributes" do
       }.to raise_exception(Dry::Struct::Error)
     end
   end
-
-  # describe "ttl" do
-  #   it "is optional" do
-  #     expect(ApiBlueprint::Blueprint.new.ttl).to be_nil
-  #   end
-  #
-  #   it "can store a duration" do
-  #     blueprint = ApiBlueprint::Blueprint.new ttl: 10.minutes
-  #     expect(blueprint.ttl).to eq 10.minutes
-  #   end
-  #
-  #   it "raises an exception when passed something which isn't a duration" do
-  #     expect {
-  #       ApiBlueprint::Blueprint.new ttl: 100
-  #     }.to raise_exception(Dry::Struct::Error)
-  #   end
-  # end
 end

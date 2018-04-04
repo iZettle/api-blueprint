@@ -1,5 +1,9 @@
 require "spec_helper"
 
+class Fruit < ApiBlueprint::Model
+  attribute :name, Types::String
+end
+
 describe ApiBlueprint::Collection do
   context "when passing something other than a hash" do
     it "raises an exception" do
@@ -19,25 +23,39 @@ describe ApiBlueprint::Collection do
 
   context "when passing a hash of blueprints" do
     let(:bps) { { foo: ApiBlueprint::Blueprint.new } }
+    let(:collection) { ApiBlueprint::Collection.new bps }
 
     it "stores the blueprints" do
-      collection = ApiBlueprint::Collection.new bps
       expect(collection.blueprints).to eq bps
     end
 
-    it "initializes an instance of the creator class if provided" do
-      obj = double()
-      collection = ApiBlueprint::Collection.new bps, obj
+    describe "#create" do
+      let(:args) { { name: "Banana" } }
 
-      expect(bps[:foo]).to receive(:run).and_return "Response"
-      expect(obj).to receive(:new).with foo: "Response"
-      collection.run nil, nil
+      it "returns the args" do
+        expect(collection.create(args)).to eq args
+      end
+    end
+  end
+
+  context "when passing a 'creates' class" do
+    let(:bps) { { foo: ApiBlueprint::Blueprint.new } }
+    let(:collection) { ApiBlueprint::Collection.new bps, Fruit }
+
+    it "stores the class" do
+      expect(collection.creates).to eq Fruit
     end
 
-    it "returns a hash of results if no creator was provided" do
-      collection = ApiBlueprint::Collection.new bps
-      expect(bps[:foo]).to receive(:run).and_return "Response"
-      expect(collection.run(nil, nil)).to eq({ foo: "Response" })
+    describe "#create" do
+      let(:args) { { name: "Banana" } }
+
+      it "returns initializes an instance of the 'create' class" do
+        expect(collection.create(args)).to be_a Fruit
+      end
+
+      it "sets attributes on the 'create' class" do
+        expect(collection.create(args).name).to eq "Banana"
+      end
     end
   end
 end

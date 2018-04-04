@@ -1,5 +1,9 @@
 require 'spec_helper'
 
+class CacheTestModel < ApiBlueprint::Model
+  attribute :name, Types::String
+end
+
 describe ApiBlueprint::Runner do
 
   describe "initializer" do
@@ -57,6 +61,46 @@ describe ApiBlueprint::Runner do
         expect {
           runner.run "foo"
         }.to raise_error(ArgumentError)
+      end
+    end
+  end
+
+  describe "caching" do
+    let(:cache) { ApiBlueprint::Cache.new key: "test" }
+    let(:runner) { ApiBlueprint::Runner.new cache: cache }
+    let(:blueprint) { ApiBlueprint::Blueprint.new url: "http://cache", creates: CacheTestModel }
+    let(:cache_options) { blueprint.all_request_options(runner.options) }
+
+    before do
+      @stub = stub_request(:get, "http://cache").to_return({
+        body: { name: "FooBar" }.to_json
+      })
+    end
+
+    context "when there is data in the cache" do
+      before do
+        allow(cache).to receive(:read).with(cache_options).and_return "Some data"
+      end
+
+      it "doesn't call the api" do
+        runner.run blueprint
+        expect(@stub).not_to have_been_requested
+      end
+
+      it "returns the cached data" do
+        expect(runner.run(blueprint)).to eq "Some data"
+      end
+    end
+
+    context "when there is not data in the cache" do
+      it "calls the api" do
+        runner.run blueprint
+        expect(@stub).to have_been_requested
+      end
+
+      it "tries to write the created model to the cache" do
+        expect(cache).to receive(:write).with(CacheTestModel.new(name: "FooBar"), blueprint.all_request_options)
+        runner.run blueprint
       end
     end
   end

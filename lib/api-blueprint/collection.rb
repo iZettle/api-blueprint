@@ -16,12 +16,7 @@ module ApiBlueprint
       @creates = creates
     end
 
-    def run(options, runner)
-      args = {}
-      blueprints.each do |name, blueprint|
-        args[name] = blueprint.run options, runner
-      end
-
+    def create(args)
       creates.present? ? creates.new(args) : args
     end
 

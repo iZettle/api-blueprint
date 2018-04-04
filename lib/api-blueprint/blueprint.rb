@@ -11,22 +11,18 @@ module ApiBlueprint
     attribute :replacements, Types::Hash.default(Hash.new)
     attribute :after_build, Types::Instance(Proc).optional
     attribute :builder, Types.Instance(ApiBlueprint::Builder).default(ApiBlueprint::Builder.new)
-    # attribute :ttl, Types.Instance(ActiveSupport::Duration).optional
 
-    def run(options = {}, runner = nil)
-      request_options = {
+    def all_request_options(options = {})
+      {
         http_method: http_method,
         url: url,
         headers: headers.merge(options.fetch(:headers, {})),
         params: params.merge(options.fetch(:params, {}))
       }
+    end
 
-      if runner&.cache&.present?
-        cache_data = runner.cache.read request_options
-        return cache_data if cache_data.present?
-      end
-
-      response = call_api request_options
+    def run(options = {}, runner = nil)
+      response = call_api all_request_options(options)
 
       if creates.present?
         builder_options = {
@@ -41,9 +37,7 @@ module ApiBlueprint
         created = response
       end
 
-      final = after_build.present? ? after_build.call(runner, created) : created
-      runner.cache.write final, request_options if runner&.cache&.present?
-      final
+      after_build.present? ? after_build.call(runner, created) : created
     end
 
     private
