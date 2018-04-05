@@ -4,11 +4,15 @@ module ApiBlueprint
 
     option :key
 
-    def read(options = {})
+    def exist?(id)
       false
     end
 
-    def write(data, options = {})
+    def read(id)
+      false
+    end
+
+    def write(id, data, options)
       data
     end
 

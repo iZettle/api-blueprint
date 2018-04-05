@@ -69,7 +69,7 @@ describe ApiBlueprint::Runner do
     let(:cache) { ApiBlueprint::Cache.new key: "test" }
     let(:runner) { ApiBlueprint::Runner.new cache: cache }
     let(:blueprint) { ApiBlueprint::Blueprint.new url: "http://cache", creates: CacheTestModel }
-    let(:cache_options) { blueprint.all_request_options(runner.options) }
+    let(:cache_id) { cache.generate_cache_key blueprint.all_request_options(runner.runner_options) }
 
     before do
       @stub = stub_request(:get, "http://cache").to_return({
@@ -79,7 +79,8 @@ describe ApiBlueprint::Runner do
 
     context "when there is data in the cache" do
       before do
-        allow(cache).to receive(:read).with(cache_options).and_return "Some data"
+        allow(cache).to receive(:exist?).with(cache_id).and_return true
+        allow(cache).to receive(:read).with(cache_id).and_return "Some data"
       end
 
       it "doesn't call the api" do
@@ -99,8 +100,13 @@ describe ApiBlueprint::Runner do
       end
 
       it "tries to write the created model to the cache" do
-        expect(cache).to receive(:write).with(CacheTestModel.new(name: "FooBar"), blueprint.all_request_options)
+        expect(cache).to receive(:write).with(cache_id, CacheTestModel.new(name: "FooBar"), {})
         runner.run blueprint
+      end
+
+      it "passes cache options to the cache#write call" do
+        expect(cache).to receive(:write).with(cache_id, CacheTestModel.new(name: "FooBar"), { foo: "bar" })
+        runner.run blueprint, foo: "bar"
       end
     end
   end

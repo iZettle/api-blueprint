@@ -1,9 +1,15 @@
 require "spec_helper"
 
 describe ApiBlueprint::Cache do
-  describe "#generate_cache_key" do
-    let(:cache) { ApiBlueprint::Cache.new key: "test" }
+  let(:cache) { ApiBlueprint::Cache.new key: "test" }
 
+  describe "#key" do
+    it "is set as an option when initializing" do
+      expect(cache.key).to eq "test"
+    end
+  end
+
+  describe "#generate_cache_key" do
     it "should include the main cache key at the front and a string after" do
       a = cache.generate_cache_key({ foo: "bar" })
       expect(a).to match(/^test:(\w{10,})/)
