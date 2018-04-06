@@ -32,5 +32,11 @@ describe ApiBlueprint::Cache do
       b = cache.generate_cache_key({ baz: "box" })
       expect(a).not_to eq b
     end
+
+    it "should not use the body key from the options hash" do
+      a = cache.generate_cache_key({ foo: "bar" })
+      b = cache.generate_cache_key({ foo: "bar", body: "foo" })
+      expect(a).to eq b
+    end
   end
 end

@@ -17,6 +17,7 @@ module ApiBlueprint
     end
 
     def generate_cache_key(options)
+      options = options.clone.except :body
       options_digest = Digest::MD5.hexdigest Marshal::dump(options.to_s.chars.sort.join)
       "#{key}:#{options_digest}"
     end

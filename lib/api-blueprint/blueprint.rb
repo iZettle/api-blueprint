@@ -6,6 +6,7 @@ module ApiBlueprint
     attribute :url, Types::String
     attribute :headers, Types::Hash.default(Hash.new)
     attribute :params, Types::Hash.default(Hash.new)
+    attribute :body, Types::Hash.default(Hash.new)
     attribute :creates, Types::Any
     attribute :parser, Types.Instance(ApiBlueprint::Parser).default(ApiBlueprint::Parser.new)
     attribute :replacements, Types::Hash.default(Hash.new)
@@ -17,7 +18,8 @@ module ApiBlueprint
         http_method: http_method,
         url: url,
         headers: headers.merge(options.fetch(:headers, {})),
-        params: params.merge(options.fetch(:params, {}))
+        params: params.merge(options.fetch(:params, {})),
+        body: body.merge(options.fetch(:body, {}))
       }
     end
 
@@ -47,6 +49,7 @@ module ApiBlueprint
         req.url options[:url]
         req.headers.merge! options[:headers]
         req.params = options[:params]
+        req.body = options[:body].to_json
       end
     end
 
