@@ -7,11 +7,11 @@ require "api-blueprint/version"
 Gem::Specification.new do |s|
   s.name        = "api-blueprint"
   s.version     = ApiBlueprint::VERSION
-  s.authors     = ["Damien"]
+  s.authors     = ["Damien Timewell"]
   s.email       = ["mail@damientimewell.com"]
-  s.homepage    = ""
-  s.summary     = "Summary of ApiBlueprint."
-  s.description = "Description of ApiBlueprint."
+  s.homepage    = "https://github.com/iZettle/api-blueprint"
+  s.summary     = "A faster, leaner, and simpler successor to ApiModel. Makes returning objects from api calls a breeze."
+  s.description = "A faster, leaner, and simpler successor to ApiModel. Makes returning objects from api calls a breeze."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
