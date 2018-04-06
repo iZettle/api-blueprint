@@ -285,6 +285,16 @@ describe ApiBlueprint::Blueprint, "running" do
     ApiBlueprint::Blueprint.new(url: "http://web/foo").run
   end
 
+  it "defaults to sending requests as application/json" do
+    stub_request(:get, "http://web/foo").with(headers: { "Content-Type": "application/json" })
+    ApiBlueprint::Blueprint.new(url: "http://web/foo").run
+  end
+
+  it "is possible to override the default content type" do
+    stub_request(:get, "http://web/foo").with(headers: { "Content-Type": "text/plain" })
+    ApiBlueprint::Blueprint.new(url: "http://web/foo", headers: { "Content-Type": "text/plain" }).run
+  end
+
   it "parses json when the response content type is application/json" do
     stub_request(:get, "http://web/json").to_return(
       body: { foo: "bar" }.to_json,

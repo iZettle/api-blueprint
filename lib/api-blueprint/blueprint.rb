@@ -47,7 +47,7 @@ module ApiBlueprint
     def call_api(options)
       connection.send options[:http_method] do |req|
         req.url options[:url]
-        req.headers.merge! options[:headers]
+        req.headers.merge!({ "Content-Type": "application/json" }.merge(options[:headers]))
         req.params = options[:params]
         req.body = options[:body].to_json
       end
