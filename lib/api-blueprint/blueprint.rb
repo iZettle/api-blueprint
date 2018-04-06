@@ -56,6 +56,7 @@ module ApiBlueprint
     def connection
       Faraday.new do |conn|
         conn.response :json, content_type: /\bjson$/
+        conn.response :raise_error
         # conn.response :logger
 
         conn.adapter Faraday.default_adapter
