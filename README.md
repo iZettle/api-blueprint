@@ -63,7 +63,7 @@ The result of using `api.run` on a blueprint is as you'd expect, nice model inst
 
 ## Model Configuration
 
-Using a `configure` block on models, you can define a default url (host), a [parser](#configparsers), a [builder](#configbuilder) and can define a list of [replacements](#configreplacements):
+Using a `configure` block on models, you can define a default url (host), a [parser](#configparser), a [builder](#configbuilder) and can define a list of [replacements](#configreplacements):
 
 ```ruby
 class AstronautsInSpace < ApiBlueprint::Model
