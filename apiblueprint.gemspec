@@ -23,10 +23,9 @@ Gem::Specification.new do |s|
   s.add_dependency "faraday"
   s.add_dependency "faraday_middleware"
   s.add_dependency "activemodel"
+  s.add_dependency "activesupport"
   s.add_dependency "addressable"
 
-  s.add_development_dependency "rails", "~> 5.1.5"
-  s.add_development_dependency "sqlite3"
   s.add_development_dependency "pry"
   s.add_development_dependency "rspec"
   s.add_development_dependency "webmock"

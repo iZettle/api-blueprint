@@ -4,6 +4,7 @@ require 'dry-initializer'
 require 'faraday'
 require 'faraday_middleware'
 require 'active_model'
+require 'active_support/core_ext/hash'
 require 'addressable'
 
 require 'api-blueprint/cache'

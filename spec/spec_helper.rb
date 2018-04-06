@@ -1,12 +1,19 @@
-ENV["RAILS_ENV"] = "test"
-require File.expand_path("../../spec/dummy/config/environment.rb", __FILE__)
-require "rails/test_help"
 require "pry"
 require "webmock/rspec"
+require "api-blueprint"
 
 class TestParser < ApiBlueprint::Parser
   def parse(body)
     body
+  end
+end
+
+class Car < ApiBlueprint::Model
+  attribute :name, Types::String
+  attribute :color, Types::String.optional
+
+  configure do |config|
+    config.host = "http://car"
   end
 end
 
