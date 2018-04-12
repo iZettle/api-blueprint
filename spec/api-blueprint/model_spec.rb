@@ -17,6 +17,14 @@ class ConfiguredModel < ApiBlueprint::Model
   end
 end
 
+class ChildModel < ConfiguredModel
+  attribute :bar, Types::Any
+
+  configure do |config|
+    config.host = "http://some-other-host.com"
+  end
+end
+
 describe PlainModel do
   it { should be_kind_of(Dry::Struct) }
 end
@@ -130,6 +138,23 @@ describe ApiBlueprint::Model do
   describe ".collection" do
     it "initializes an ApiBlueprint::Collection" do
       expect(collection).to be_a ApiBlueprint::Collection
+    end
+  end
+
+  describe "Subclasses" do
+    it "inherits attributes from the superclass" do
+      child = ChildModel.new foo: "from parent", bar: "from child"
+      expect(child.foo).to eq "from parent"
+      expect(child.bar).to eq "from child"
+    end
+
+    it "inherits config from the superclass" do
+      expect(ChildModel.config.replacements).to eq ConfiguredModel.config.replacements
+    end
+
+    it "overrides config from the superclass" do
+      expect(ChildModel.config.host).not_to eq ConfiguredModel.config.host
+      expect(ChildModel.config.host).to eq "http://some-other-host.com"
     end
   end
 end
