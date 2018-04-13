@@ -99,6 +99,25 @@ config.replacements = {
 }
 ```
 
+## Validation
+
+You can use [active model validations](http://guides.rubyonrails.org/active_record_validations.html) on models to validate body payloads. This is useful to pre-check user input before sending API requests. It is disabled by default, but to enable, you just need to set `validate: true` on your blueprint definitions:
+
+```ruby
+class Astronaut < ApiBlueprint::Model
+  attribute :name, Types::String
+  validates :name, presence: true
+
+  def self.send_to_space(name)
+    blueprint :post, "/space", body: { name: name }, validate: true
+  end
+end
+
+Astronaut.send_to_space(nil) # => <ActiveModel::Errors ...>
+```
+
+Behind the scenes, ApiBlueprint uses the body hash to initialize a new instance of your model, and then runs validations. If there are any errors, the API request is not run and the errors object is returned.
+
 ## Blueprint options
 
 When defining a blueprint in a model, you can pass it a number of options to set request headers, params, body, or to run code after an instance of the model has been initialized. Here's some examples:

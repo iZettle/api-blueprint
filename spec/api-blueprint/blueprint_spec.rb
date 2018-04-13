@@ -370,3 +370,48 @@ describe ApiBlueprint::Blueprint, "running" do
     end
   end
 end
+
+describe ApiBlueprint::Blueprint, "validation" do
+  before do
+    @stub = stub_request(:get, "http://url").to_return(body: { name: "the name from the api" }.to_json)
+  end
+
+  context "when creates is present, and the model is invalid" do
+    let(:blueprint) { ApiBlueprint::Blueprint.new url: "http://url", creates: CarWithValidation }
+    let(:result) { blueprint.run body: { name: "" }, validate: true }
+
+    it "returns errors" do
+      expect(result).to be_a(ActiveModel::Errors)
+    end
+
+    it "doesn't call the api" do
+      result
+      expect(@stub).not_to have_been_requested
+    end
+  end
+
+  context "when creates is present, and the model is valid" do
+    let(:blueprint) { ApiBlueprint::Blueprint.new url: "http://url", creates: CarWithValidation }
+    let(:result) { blueprint.run body: { name: "Some car" }, validate: true }
+
+    it "calls the api" do
+      result
+      expect(@stub).to have_been_requested
+    end
+
+    it "returns the api version of the model" do
+      expect(result.name).to eq "the name from the api"
+    end
+  end
+
+  context "when creates is not present" do
+    let(:blueprint) { ApiBlueprint::Blueprint.new url: "http://url" }
+    let(:result) { blueprint.run body: { name: "Some car" }, validate: true }
+
+    it "raises an exception" do
+      expect{
+        result
+      }.to raise_error(ApiBlueprint::BuilderError)
+    end
+  end
+end

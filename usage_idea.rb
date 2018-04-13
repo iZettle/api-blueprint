@@ -2,10 +2,12 @@ class Car < ApiBlueprint::Model
   attribute :name, Types::String
   attribute :color, Types::String
 
+  validates :name, presence: true
+
   configure do |config|
     config.host = "http://my-api.com"
     config.replacements = {
-      colour: :color 
+      colour: :color
     }
   end
 
@@ -14,7 +16,7 @@ class Car < ApiBlueprint::Model
   end
 
   def self.create_car(params)
-    blueprint :post, "/cars", body: params
+    blueprint :post, "/cars", body: params, validate: true
   end
 
   def self.update(params)
