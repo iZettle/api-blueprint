@@ -19,4 +19,5 @@ require 'api-blueprint/collection'
 
 module ApiBlueprint
   class DefinitionError < StandardError; end
+  class BuilderError < StandardError; end
 end

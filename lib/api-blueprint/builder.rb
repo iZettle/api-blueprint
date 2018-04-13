@@ -22,7 +22,11 @@ module ApiBlueprint
     end
 
     def build_item(item)
-      creates.new item
+      if creates.present?
+        creates.new item
+      else
+        raise BuilderError, "To build an object, you must set #creates"
+      end
     end
 
     private

@@ -24,17 +24,15 @@ module ApiBlueprint
     end
 
     def run(options = {}, runner = nil)
+      if options.delete :validate
+        result = build from: options[:body]
+        return result.errors if result.invalid?
+      end
+
       response = call_api all_request_options(options)
 
       if creates.present?
-        builder_options = {
-          body: parser.parse(response.body),
-          headers: response.headers,
-          replacements: replacements,
-          creates: creates
-        }
-
-        created = builder.new(builder_options).build
+        created = build from: response.body, headers: response.headers
       else
         created = response
       end
@@ -43,6 +41,17 @@ module ApiBlueprint
     end
 
     private
+
+    def build(from:, headers: {})
+      builder_options = {
+        body: parser.parse(from),
+        headers: headers,
+        replacements: replacements,
+        creates: creates
+      }
+
+      builder.new(builder_options).build
+    end
 
     def call_api(options)
       connection.send options[:http_method] do |req|

@@ -45,3 +45,20 @@ describe ApiBlueprint::Builder, "replacements" do
     expect(car.color).to eq body[:colour]
   end
 end
+
+describe ApiBlueprint::Blueprint, "#build_item" do
+  context "when creates is present" do
+    it "initializes a new instance of the creates class with the item" do
+      expect(Car).to receive(:new).with({ name: "foo" })
+      ApiBlueprint::Builder.new(creates: Car).build_item({ name: "foo" })
+    end
+  end
+
+  context "when creates is not present" do
+    it "raises a BuilderError" do
+      expect {
+        ApiBlueprint::Builder.new.build_item({ name: "Foo" })
+      }
+    end
+  end
+end
