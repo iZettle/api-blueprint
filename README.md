@@ -76,25 +76,6 @@ class AstronautsInSpace < ApiBlueprint::Model
 end
 ```
 
-## Validation
-
-You can use [active model validations](http://guides.rubyonrails.org/active_record_validations.html) on models to validate body payloads. This is useful to pre-check user input before sending API requests. It is disabled by default, but to enable, you just need to set `validate: true` on your blueprint definitions:
-
-```ruby
-class Astronaut < ApiBlueprint::Model
-  attribute :name, Types::String
-  validates :name, presence: true
-
-  def self.send_to_space(name)
-    blueprint :post, "/space", body: { name: name }, validate: true
-  end
-end
-
-Astronaut.send_to_space(nil) # => <ActiveModel::Errors ...>
-```
-
-Behind the scenes, ApiBlueprint uses the body hash to initialize a new instance of your model, and then runs validations. If there are any errors, the API request is not run and the errors object is returned.
-
 ### Config.builder
 
 When running a blueprint, after the response is returned and parsed, the result is passed to a builder, which is responsible for initializing objects from the response. The default [ApiBlueprint::Builder](https://github.com/iZettle/api-blueprint/blob/master/lib/api-blueprint/builder.rb)
@@ -117,6 +98,25 @@ config.replacements = {
   numberOfAstronautsInSpace: :number
 }
 ```
+
+## Validation
+
+You can use [active model validations](http://guides.rubyonrails.org/active_record_validations.html) on models to validate body payloads. This is useful to pre-check user input before sending API requests. It is disabled by default, but to enable, you just need to set `validate: true` on your blueprint definitions:
+
+```ruby
+class Astronaut < ApiBlueprint::Model
+  attribute :name, Types::String
+  validates :name, presence: true
+
+  def self.send_to_space(name)
+    blueprint :post, "/space", body: { name: name }, validate: true
+  end
+end
+
+Astronaut.send_to_space(nil) # => <ActiveModel::Errors ...>
+```
+
+Behind the scenes, ApiBlueprint uses the body hash to initialize a new instance of your model, and then runs validations. If there are any errors, the API request is not run and the errors object is returned.
 
 ## Blueprint options
 
