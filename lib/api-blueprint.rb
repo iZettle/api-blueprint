@@ -23,4 +23,5 @@ module ApiBlueprint
   class BuilderError < StandardError; end
   class ServerError < StandardError; end
   class UnauthenticatedError < StandardError; end
+  class ClientError < StandardError; end
 end

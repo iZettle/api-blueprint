@@ -5,7 +5,9 @@ module ApiBlueprint
       case env[:status]
       when 401
         raise ApiBlueprint::UnauthenticatedError, response_values(env)
-      when 499...599
+      when 402..499
+        raise ApiBlueprint::ClientError, response_values(env)
+      when 500...599
         raise ApiBlueprint::ServerError, response_values(env)
       end
     end

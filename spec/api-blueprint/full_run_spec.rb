@@ -91,5 +91,47 @@ describe "End-to-end test" do
         }.to raise_error(ApiBlueprint::UnauthenticatedError)
       end
     end
+
+    context "403 forbidden" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return status: 403
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "raises an ClientError" do
+        expect {
+          result
+        }.to raise_error(ApiBlueprint::ClientError)
+      end
+    end
+
+    context "500 internal server error" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return status: 500
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "raises an ServerError" do
+        expect {
+          result
+        }.to raise_error(ApiBlueprint::ServerError)
+      end
+    end
+
+    context "503 service unavailable" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return status: 503
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "raises an ServerError" do
+        expect {
+          result
+        }.to raise_error(ApiBlueprint::ServerError)
+      end
+    end
   end
 end

@@ -360,15 +360,6 @@ describe ApiBlueprint::Blueprint, "running" do
     after_build = -> (_, response) { duck.quack }
     ApiBlueprint::Blueprint.new(url: "http://web/foo", after_build: after_build).run
   end
-
-  [404, 401, 500, 503].each do |status|
-    it "raises an exception when the response status is #{status}" do
-      stub_request(:get, "http://web/foo").to_return(status: status)
-      expect {
-        ApiBlueprint::Blueprint.new(url: "http://web/foo").run
-      }.to raise_error(Faraday::ClientError)
-    end
-  end
 end
 
 describe ApiBlueprint::Blueprint, "validation" do
