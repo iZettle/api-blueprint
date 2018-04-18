@@ -50,7 +50,9 @@ module ApiBlueprint
         creates: creates
       }
 
-      builder.new(builder_options).build
+      builder.new(builder_options).build.tap do |built|
+        set_errors built, builder_options[:body]
+      end
     end
 
     def call_api(options)
@@ -64,8 +66,9 @@ module ApiBlueprint
 
     def connection
       Faraday.new do |conn|
+        conn.use ApiBlueprint::ResponseMiddleware
         conn.response :json, content_type: /\bjson$/
-        conn.response :raise_error
+        # conn.response :raise_error
         # conn.response :logger
 
         conn.adapter Faraday.default_adapter
@@ -73,6 +76,25 @@ module ApiBlueprint
           "User-Agent": "ApiBlueprint"
         }
       end
+    end
+
+    def set_errors(obj, body)
+      if obj.respond_to? :errors
+        errors = body.with_indifferent_access.fetch :errors, {}
+        errors.each do |field, messages|
+          if messages.is_a? Array
+            messages.each do |message|
+              set_error obj, field, message
+            end
+          else
+            set_error obj, field, messages
+          end
+        end
+      end
+    end
+
+    def set_error(obj, field, messages)
+      obj.errors.add field.to_sym, messages
     end
 
   end
