@@ -204,12 +204,12 @@ describe ApiBlueprint::Blueprint, "building" do
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers, status: 200).and_return(builder)
     blueprint.run
   end
 
   it "passes replacements to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: { foo: :bar }, creates: Car, headers: @headers).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: { foo: :bar }, creates: Car, headers: @headers, status: 200).and_return(builder)
     blueprint_with_replacements.run
   end
 
@@ -245,7 +245,7 @@ describe ApiBlueprint::Blueprint, "building collections" do
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers, status: 200).and_return(builder)
     blueprint.run
   end
 
@@ -313,6 +313,16 @@ describe ApiBlueprint::Blueprint, "running" do
     expect(response.body).to be_a String
   end
 
+  it "handles application/json responses which are blank" do
+    stub_request(:get, "http://web/json").to_return(
+      body: "",
+      headers: { "Content-Type"=> "application/json" }
+    )
+    expect {
+      ApiBlueprint::Blueprint.new(url: "http://web/json").run
+    }.to_not raise_error
+  end
+
   it "uses the correct http_method" do
     stub_request(:post, "http://post-request")
     ApiBlueprint::Blueprint.new(http_method: :post, url: "http://post-request").run
@@ -359,15 +369,6 @@ describe ApiBlueprint::Blueprint, "running" do
     expect(duck).to receive(:quack)
     after_build = -> (_, response) { duck.quack }
     ApiBlueprint::Blueprint.new(url: "http://web/foo", after_build: after_build).run
-  end
-
-  [404, 401, 500, 503].each do |status|
-    it "raises an exception when the response status is #{status}" do
-      stub_request(:get, "http://web/foo").to_return(status: status)
-      expect {
-        ApiBlueprint::Blueprint.new(url: "http://web/foo").run
-      }.to raise_error(Faraday::ClientError)
-    end
   end
 end
 

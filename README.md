@@ -118,6 +118,37 @@ Astronaut.send_to_space(nil) # => <ActiveModel::Errors ...>
 
 Behind the scenes, ApiBlueprint uses the body hash to initialize a new instance of your model, and then runs validations. If there are any errors, the API request is not run and the errors object is returned.
 
+## Error handling
+
+If an API response includes an `errors` object, ApiBlueprint uses it to assign `ActiveModel::Errors` instances on the class which is built. This way, validation errors which come an the API behave exactly the same as validation errors set locally through validations on the model.
+
+Certain response statuses will also cause ApiBlueprint to behave in different ways:
+
+| HTTP Status range | Behavior |
+| ----------------- | -------- |
+| 200 - 400 | Objects are built normally, no errors raised |
+| 401 | raises `ApiBlueprint::UnauthenticatedError` |
+| 402 - 499 | raises `ApiBlueprint::ClientError` |
+| 500 - 599 | raises `ApiBlueprint::ServerError` |
+
+## Access to response headers and status codes
+
+By default, ApiBlueprint tries to set `response_headers` and `response_status` on the model which is created from an API response. `ApiBlueprint::Model` also has a convenience method `api_request_success?` which can be used to easily assert whether a response was in the 200-399 range. This makes it simple to render different responses in controllers. For example:
+
+```ruby
+# app/controllers/astronauts_controller.rb
+class AstronautsController < ApplicationController
+  def index
+    @astronauts = api.run AstronautsInSpace.fetch
+    if @astronauts.api_request_success?
+      render json: @astronauts
+    else
+      render json: @astronauts.errors, status: :bad_request
+    end
+  end
+end
+```
+
 ## Blueprint options
 
 When defining a blueprint in a model, you can pass it a number of options to set request headers, params, body, or to run code after an instance of the model has been initialized. Here's some examples:

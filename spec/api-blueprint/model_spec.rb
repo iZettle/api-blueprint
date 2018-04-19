@@ -46,6 +46,32 @@ describe ApiBlueprint::Model do
     ConfiguredModel.collection foo: blueprint
   end
 
+  describe "attributes" do
+    describe "response_headers" do
+      it "defaults to nil" do
+        model = PlainModel.new
+        expect(model.response_headers).to eq nil
+      end
+
+      it "sets the headers attribute" do
+        model = PlainModel.new response_headers: { foo: "Bar" }
+        expect(model.response_headers[:foo]).to eq "Bar"
+      end
+    end
+
+    describe "response_status" do
+      it "defaults to nil" do
+        model = PlainModel.new
+        expect(model.response_status).to eq nil
+      end
+
+      it "sets the status attribute" do
+        model = PlainModel.new response_status: 500
+        expect(model.response_status).to eq 500
+      end
+    end
+  end
+
   describe "config" do
     it "should set the default host to be a blank string" do
       expect(PlainModel.config.host).to eq ""
@@ -155,6 +181,25 @@ describe ApiBlueprint::Model do
     it "overrides config from the superclass" do
       expect(ChildModel.config.host).not_to eq ConfiguredModel.config.host
       expect(ChildModel.config.host).to eq "http://some-other-host.com"
+    end
+  end
+
+  describe "#api_request_success?" do
+    it "returns true if the response status is 200...299" do
+      (200...299).to_a.each do |i|
+        model = PlainModel.new response_status: i
+        expect(model.api_request_success?).to be true
+      end
+    end
+
+    it "returns false if the response status is not in the 200 range" do
+      model = PlainModel.new response_status: 404
+      expect(model.api_request_success?).to be false
+    end
+
+    it "returns false if response_status is nil" do
+      model = PlainModel.new
+      expect(model.api_request_success?).to be false
     end
   end
 end

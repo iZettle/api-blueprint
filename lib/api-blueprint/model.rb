@@ -14,6 +14,9 @@ module ApiBlueprint
     setting :builder, Builder.new
     setting :replacements, {}
 
+    attribute :response_headers, Types::Hash.optional
+    attribute :response_status, Types::Int.optional
+
     def self.blueprint(http_method, url, options = {}, &block)
       blueprint_opts = {
         http_method: http_method,
@@ -33,6 +36,10 @@ module ApiBlueprint
 
     def self.collection(blueprints)
       Collection.new blueprints, self
+    end
+
+    def api_request_success?
+      response_status.present? && (200...299).include?(response_status)
     end
 
   end

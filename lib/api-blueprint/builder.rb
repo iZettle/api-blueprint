@@ -4,6 +4,7 @@ module ApiBlueprint
 
     attribute :body, Types::Hash.default(Hash.new)
     attribute :headers, Types::Hash.default(Hash.new)
+    attribute :status, Types::Int.optional
     attribute :replacements, Types::Hash.default(Hash.new)
     attribute :creates, Types::Any
 
@@ -18,7 +19,12 @@ module ApiBlueprint
     end
 
     def prepare_item(item)
-      with_replacements item.with_indifferent_access
+      meta = {
+        response_headers: headers,
+        response_status: status
+      }
+
+      meta.merge with_replacements(item.deep_symbolize_keys)
     end
 
     def build_item(item)

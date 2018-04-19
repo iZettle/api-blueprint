@@ -51,4 +51,101 @@ describe "End-to-end test" do
       expect(result.second_largest.name).to eq "Manchester City"
     end
   end
+
+  describe "Handling different responses from the api" do
+    before do
+      stub_request(:get, "http://cities/?name=Unknown").to_return body: "", headers: { "Content-Type": "application/json" }
+    end
+
+    let(:result) { runner.run City.fetch("Unknown") }
+
+    it "doesn't raise an exception" do
+      expect {
+        result
+      }.not_to raise_error
+    end
+  end
+
+  describe "Handling different statuses from the API" do
+    context "400 bad request" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return \
+          body: { name: "London City", errors: { name: ["some error", "another error"] } }.to_json,
+          status: 400
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "doesn't raise an exception" do
+        expect {
+          result
+        }.not_to raise_error
+      end
+
+      it "sets errors on the instance" do
+        expect(result.errors[:name]).to include "some error"
+        expect(result.errors[:name]).to include "another error"
+      end
+
+      it "sets the normal attributes" do
+        expect(result.name).to eq "London City"
+      end
+    end
+
+    context "401 unauthenticated" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return status: 401
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "raises an UnauthenticatedError" do
+        expect {
+          result
+        }.to raise_error(ApiBlueprint::UnauthenticatedError)
+      end
+    end
+
+    context "403 forbidden" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return status: 403
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "raises an ClientError" do
+        expect {
+          result
+        }.to raise_error(ApiBlueprint::ClientError)
+      end
+    end
+
+    context "500 internal server error" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return status: 500
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "raises an ServerError" do
+        expect {
+          result
+        }.to raise_error(ApiBlueprint::ServerError)
+      end
+    end
+
+    context "503 service unavailable" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return status: 503
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "raises an ServerError" do
+        expect {
+          result
+        }.to raise_error(ApiBlueprint::ServerError)
+      end
+    end
+  end
 end

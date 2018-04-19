@@ -100,12 +100,12 @@ describe ApiBlueprint::Runner do
       end
 
       it "tries to write the created model to the cache" do
-        expect(cache).to receive(:write).with(cache_id, CacheTestModel.new(name: "FooBar"), {})
+        expect(cache).to receive(:write).with(cache_id, CacheTestModel.new(name: "FooBar", response_headers: {}, response_status: 200), {})
         runner.run blueprint
       end
 
       it "passes cache options to the cache#write call" do
-        expect(cache).to receive(:write).with(cache_id, CacheTestModel.new(name: "FooBar"), { foo: "bar" })
+        expect(cache).to receive(:write).with(cache_id, CacheTestModel.new(name: "FooBar", response_headers: {}, response_status: 200), { foo: "bar" })
         runner.run blueprint, foo: "bar"
       end
     end
