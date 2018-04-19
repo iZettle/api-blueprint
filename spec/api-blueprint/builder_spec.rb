@@ -35,6 +35,17 @@ describe ApiBlueprint::Builder, "building collections" do
   end
 end
 
+describe ApiBlueprint::Builder, "response metadata" do
+  let(:body) { { name: "Ford", color: "red" } }
+  let(:headers) { { status: 200, "Content-Type": "application/json" }}
+  let(:builder) { ApiBlueprint::Builder.new(body: body, headers: headers, creates: Car) }
+  let(:car) { builder.build }
+
+  it "stores response headers on the created class" do
+    expect(car.response_headers).to eq headers
+  end
+end
+
 describe ApiBlueprint::Builder, "replacements" do
   let(:replacements) { { carName: :name, colour: :color } }
   let(:body) { { carName: "VW Camper", colour: "Blue" } }

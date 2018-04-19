@@ -32,7 +32,7 @@ module ApiBlueprint
       response = call_api all_request_options(options)
 
       if creates.present?
-        created = build from: response.body, headers: response.headers
+        created = build from: response.body, headers: response.headers, status: response.status
       else
         created = response
       end
@@ -42,10 +42,11 @@ module ApiBlueprint
 
     private
 
-    def build(from:, headers: {})
+    def build(from:, headers: {}, status: nil)
       builder_options = {
         body: parser.parse(from),
         headers: headers,
+        status: status,
         replacements: replacements,
         creates: creates
       }

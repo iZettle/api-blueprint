@@ -204,12 +204,12 @@ describe ApiBlueprint::Blueprint, "building" do
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers, status: 200).and_return(builder)
     blueprint.run
   end
 
   it "passes replacements to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: { foo: :bar }, creates: Car, headers: @headers).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: { foo: :bar }, creates: Car, headers: @headers, status: 200).and_return(builder)
     blueprint_with_replacements.run
   end
 
@@ -245,7 +245,7 @@ describe ApiBlueprint::Blueprint, "building collections" do
   }
 
   it "passes the correct arguments to the builder" do
-    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers).and_return(builder)
+    expect(ApiBlueprint::Builder).to receive(:new).with(body: @options, replacements: {}, creates: Car, headers: @headers, status: 200).and_return(builder)
     blueprint.run
   end
 
