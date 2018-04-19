@@ -313,6 +313,16 @@ describe ApiBlueprint::Blueprint, "running" do
     expect(response.body).to be_a String
   end
 
+  it "handles application/json responses which are blank" do
+    stub_request(:get, "http://web/json").to_return(
+      body: "",
+      headers: { "Content-Type"=> "application/json" }
+    )
+    expect {
+      ApiBlueprint::Blueprint.new(url: "http://web/json").run
+    }.to_not raise_error
+  end
+
   it "uses the correct http_method" do
     stub_request(:post, "http://post-request")
     ApiBlueprint::Blueprint.new(http_method: :post, url: "http://post-request").run

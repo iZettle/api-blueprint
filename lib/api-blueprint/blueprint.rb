@@ -79,7 +79,7 @@ module ApiBlueprint
     end
 
     def set_errors(obj, body)
-      if obj.respond_to? :errors
+      if obj.respond_to?(:errors) && body.is_a?(Hash)
         errors = body.with_indifferent_access.fetch :errors, {}
         errors.each do |field, messages|
           if messages.is_a? Array

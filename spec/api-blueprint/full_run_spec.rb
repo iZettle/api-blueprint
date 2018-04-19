@@ -52,7 +52,21 @@ describe "End-to-end test" do
     end
   end
 
-  describe "Handling different responses from the API" do
+  describe "Handling different responses from the api" do
+    before do
+      stub_request(:get, "http://cities/?name=Unknown").to_return body: "", headers: { "Content-Type": "application/json" }
+    end
+
+    let(:result) { runner.run City.fetch("Unknown") }
+
+    it "doesn't raise an exception" do
+      expect {
+        result
+      }.not_to raise_error
+    end
+  end
+
+  describe "Handling different statuses from the API" do
     context "400 bad request" do
       before do
         stub_request(:get, "http://cities/?name=London").to_return \
