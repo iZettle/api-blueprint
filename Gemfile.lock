@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    api-blueprint (0.2.0)
+    api-blueprint (0.3.0)
       activemodel
       activesupport
       addressable
@@ -76,7 +76,7 @@ GEM
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
     hashdiff (0.3.7)
-    i18n (1.0.0)
+    i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     inflecto (0.0.2)
