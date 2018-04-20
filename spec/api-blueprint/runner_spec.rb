@@ -69,7 +69,7 @@ describe ApiBlueprint::Runner do
     let(:cache) { ApiBlueprint::Cache.new key: "test" }
     let(:runner) { ApiBlueprint::Runner.new cache: cache }
     let(:blueprint) { ApiBlueprint::Blueprint.new url: "http://cache", creates: CacheTestModel }
-    let(:cache_id) { cache.generate_cache_key blueprint.all_request_options(runner.runner_options) }
+    let(:cache_id) { cache.generate_cache_key CacheTestModel, blueprint.all_request_options(runner.runner_options) }
 
     before do
       @stub = stub_request(:get, "http://cache").to_return({

@@ -25,13 +25,13 @@ module ApiBlueprint
       request_options = blueprint.all_request_options(runner_options)
 
       if cache.present?
-        cache_key = cache.generate_cache_key request_options
+        cache_key = cache.generate_cache_key blueprint.creates, request_options
         return cache.read cache_key if cache.exist? cache_key
       end
 
       blueprint.run(runner_options, self).tap do |result|
         if cache.present?
-          cache_key = cache.generate_cache_key request_options
+          cache_key = cache.generate_cache_key blueprint.creates, request_options
           cache.write cache_key, result, cache_options
         end
       end

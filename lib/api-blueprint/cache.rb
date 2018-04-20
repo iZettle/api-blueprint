@@ -16,10 +16,10 @@ module ApiBlueprint
       data
     end
 
-    def generate_cache_key(options)
+    def generate_cache_key(klass, options)
       options = options.clone.except :body
       options_digest = Digest::MD5.hexdigest Marshal::dump(options.to_s.chars.sort.join)
-      "#{key}:#{options_digest}"
+      "#{key}:#{klass&.name}:#{options_digest}"
     end
 
   end
