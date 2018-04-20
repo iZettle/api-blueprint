@@ -10,32 +10,32 @@ describe ApiBlueprint::Cache do
   end
 
   describe "#generate_cache_key" do
-    it "should include the main cache key at the front and a string after" do
-      a = cache.generate_cache_key({ foo: "bar" })
-      expect(a).to match(/^test:(\w{10,})/)
+    it "should include the main cache key at the front, followed by the class, and a string after" do
+      a = cache.generate_cache_key(Car, { foo: "bar" })
+      expect(a).to match(/^test:Car:(\w{10,})/)
     end
 
     it "should return the same id from two hashes with the same data" do
-      a = cache.generate_cache_key({ foo: "bar" })
-      b = cache.generate_cache_key({ foo: "bar" })
+      a = cache.generate_cache_key(Car, { foo: "bar" })
+      b = cache.generate_cache_key(Car, { foo: "bar" })
       expect(a).to eq b
     end
 
     it "should not matter which order the keys are in" do
-      a = cache.generate_cache_key({ foo: "bar", baz: "box" })
-      b = cache.generate_cache_key({ baz: "box", foo: "bar" })
+      a = cache.generate_cache_key(Car, { foo: "bar", baz: "box" })
+      b = cache.generate_cache_key(Car, { baz: "box", foo: "bar" })
       expect(a).to eq b
     end
 
     it "should return a new id if the hashes are different" do
-      a = cache.generate_cache_key({ foo: "bar" })
-      b = cache.generate_cache_key({ baz: "box" })
+      a = cache.generate_cache_key(Car, { foo: "bar" })
+      b = cache.generate_cache_key(Car, { baz: "box" })
       expect(a).not_to eq b
     end
 
     it "should not use the body key from the options hash" do
-      a = cache.generate_cache_key({ foo: "bar" })
-      b = cache.generate_cache_key({ foo: "bar", body: "foo" })
+      a = cache.generate_cache_key(Car, { foo: "bar" })
+      b = cache.generate_cache_key(Car, { foo: "bar", body: "foo" })
       expect(a).to eq b
     end
   end
