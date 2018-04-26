@@ -126,10 +126,10 @@ Certain response statuses will also cause ApiBlueprint to behave in different wa
 
 | HTTP Status range | Behavior |
 | ----------------- | -------- |
-| 200 - 399 | Objects are built normally, no errors raised |
+| 200 - 400 | Objects are built normally, no errors raised |
 | 401 | raises `ApiBlueprint::UnauthenticatedError` |
 | 404 | raises `ApiBlueprint::NotFoundError` |
-| 400 - 499 | raises `ApiBlueprint::ClientError` |
+| 402 - 499 | raises `ApiBlueprint::ClientError` |
 | 500 - 599 | raises `ApiBlueprint::ServerError` |
 
 ## Access to response headers and status codes
