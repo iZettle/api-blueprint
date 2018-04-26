@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    api-blueprint (0.4.0)
+    api-blueprint (0.5.0)
       activemodel
       activesupport
       addressable
@@ -36,7 +36,7 @@ GEM
       dry-configurable (~> 0.1, >= 0.1.3)
     dry-core (0.4.5)
       concurrent-ruby (~> 1.0)
-    dry-equalizer (0.2.0)
+    dry-equalizer (0.2.1)
     dry-initializer (2.4.0)
     dry-logic (0.4.2)
       dry-container (~> 0.2, >= 0.2.6)
