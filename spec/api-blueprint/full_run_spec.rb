@@ -120,6 +120,20 @@ describe "End-to-end test" do
       end
     end
 
+    context "404 not found" do
+      before do
+        stub_request(:get, "http://cities/?name=London").to_return status: 404
+      end
+
+      let(:result) { runner.run City.fetch("London") }
+
+      it "raises an ClientError" do
+        expect {
+          result
+        }.to raise_error(ApiBlueprint::NotFoundError)
+      end
+    end
+
     context "500 internal server error" do
       before do
         stub_request(:get, "http://cities/?name=London").to_return status: 500
