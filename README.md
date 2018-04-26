@@ -61,6 +61,28 @@ The result of using `api.run` on a blueprint is as you'd expect, nice model inst
 </ul>
 ```
 
+## Collections
+
+Sometimes you might want a model which requires multiple api calls and collects the results onto different attributes. You can use an `ApiBlueprint::Model.collection` for this.
+
+```ruby
+class Vehicles < ApiBlueprint::Model
+  attribute :car, Types.Constructor(Car)
+  attribute :bus, Types.Constructor(Bus)
+
+  def self.fetch_all(color)
+    collection \
+      car: Car.all(color),
+      bus: Bus.all(color)
+  end
+end
+
+# Example use
+red_vehicles = api.run Vehicles.fetch_all("red")
+red_vehicles.cars # [<Car>, <Car>, ...]
+red_vehicles.busses # [<Bus>, <Bus>, ...]
+```
+
 ## Model Configuration
 
 Using a `configure` block on models, you can define a default url (host), a [parser](#configparser), a [builder](#configbuilder) and can define a list of [replacements](#configreplacements):

@@ -10,14 +10,14 @@ class Bus < ApiBlueprint::Model
   end
 end
 
-class Vehicles < ApiBlueprint::Collection
-  attribute :car, Types.Constructor(Car)
-  attribute :bus, Types.Constructor(Bus)
+class Vehicles < ApiBlueprint::Model
+  attribute :cars, Types.Constructor(Car)
+  attribute :busses, Types.Constructor(Bus)
 
   def self.fetch_all(color)
     collection \
-      car: Car.all(color),
-      bus: Bus.all(color)
+      cars: Car.all(color),
+      busses: Bus.all(color)
   end
 end
 
