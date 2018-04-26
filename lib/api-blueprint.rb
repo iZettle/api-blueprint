@@ -24,4 +24,5 @@ module ApiBlueprint
   class ServerError < StandardError; end
   class UnauthenticatedError < StandardError; end
   class ClientError < StandardError; end
+  class NotFoundError < StandardError; end
 end
