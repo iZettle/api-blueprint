@@ -4,6 +4,9 @@ class CacheTestModel < ApiBlueprint::Model
   attribute :name, Types::String
 end
 
+class CustomCache < ApiBlueprint::Cache
+end
+
 describe ApiBlueprint::Runner do
 
   describe "initializer" do
@@ -12,9 +15,26 @@ describe ApiBlueprint::Runner do
       expect(runner.headers[:foo]).to eq "bar"
     end
 
-    it "defaults to a blank hash of headers" do
-      runner = ApiBlueprint::Runner.new
-      expect(runner.headers).to eq Hash.new
+    it "can take a cache option" do
+      runner = ApiBlueprint::Runner.new cache: CustomCache.new(key: "hi")
+      expect(runner.cache).to be_a CustomCache
+    end
+
+    it "can take a registry option" do
+      runner = ApiBlueprint::Runner.new registry: { foo: "bar" }
+      expect(runner.registry).to eq({ foo: "bar" })
+    end
+
+    it "defaults headers to a blank hash" do
+      expect(ApiBlueprint::Runner.new.headers).to eq Hash.new
+    end
+
+    it "defaults cache to a new instance of the Cache" do
+      expect(ApiBlueprint::Runner.new.cache).to be_a ApiBlueprint::Cache
+    end
+
+    it "defaults registry to a blank hash" do
+      expect(ApiBlueprint::Runner.new.registry).to eq Hash.new
     end
   end
 
@@ -107,6 +127,55 @@ describe ApiBlueprint::Runner do
       it "passes cache options to the cache#write call" do
         expect(cache).to receive(:write).with(cache_id, CacheTestModel.new(name: "FooBar", response_headers: {}, response_status: 200), { foo: "bar" })
         runner.run blueprint, foo: "bar"
+      end
+    end
+  end
+
+  describe "Adding to the registry" do
+    let(:runner) { ApiBlueprint::Runner.new }
+    before do
+      runner.register :london, -> { City.fetch "London" }, ttl: 10.minutes
+    end
+
+    it "should store the blueprint in the api registry" do
+      expect(runner.registry[:london][:blueprint]).to be_a Proc
+    end
+
+    it "should store the cache settings in the api registry" do
+      expect(runner.registry[:london][:cache]).to eq({ ttl: 10.minutes })
+    end
+
+    it "should run the blueprint when the proc is called" do
+      expect(City).to receive(:fetch).with("London")
+      runner.registry[:london][:blueprint].call
+    end
+  end
+
+  describe "Using the registry" do
+    let(:runner) do
+      ApiBlueprint::Runner.new registry: {
+        stockholm: { blueprint: -> { City.fetch "Stockholm" }, cache: {} },
+        rio: { blueprint: -> { City.fetch "Rio" }, cache: { ttl: 20.minutes } }
+      }
+    end
+
+    context "when the key exists in the registry" do
+      it "calls run with the blueprint" do
+        expect(runner).to receive(:run).with(City.fetch("Stockholm"), {})
+        runner.stockholm
+      end
+
+      it "passes cache options to the runner" do
+        expect(runner).to receive(:run).with(City.fetch("Rio"), { ttl: 20.minutes })
+        runner.rio
+      end
+    end
+
+    context "when the key doesn't exist in the registry" do
+      it "raises a NoMethodError" do
+        expect {
+          runner.gotland
+        }.to raise_error(NoMethodError)
       end
     end
   end
