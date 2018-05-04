@@ -1,12 +1,11 @@
 module ApiBlueprint
-  class Builder < Dry::Struct
-    constructor_type :schema
+  class Builder < ApiBlueprint::Struct
 
     attribute :body, Types::Hash.default(Hash.new)
     attribute :headers, Types::Hash.default(Hash.new)
-    attribute :status, Types::Int.optional
+    attribute :status, Types::Integer.optional
     attribute :replacements, Types::Hash.default(Hash.new)
-    attribute :creates, Types::Any
+    attribute :creates, Types::Any.optional
 
     attr_writer :body
 

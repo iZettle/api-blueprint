@@ -1,5 +1,5 @@
 module ApiBlueprint
-  class Model < Dry::Struct
+  class Model < ApiBlueprint::Struct
     extend Dry::Configurable
     include ActiveModel::Conversion
     include ActiveModel::Validations
@@ -7,15 +7,13 @@ module ApiBlueprint
     extend ActiveModel::Naming
     extend ActiveModel::Callbacks
 
-    constructor_type :schema
-
     setting :host, ""
     setting :parser, Parser.new
     setting :builder, Builder.new
     setting :replacements, {}
 
     attribute :response_headers, Types::Hash.optional
-    attribute :response_status, Types::Int.optional
+    attribute :response_status, Types::Integer.optional
 
     def self.blueprint(http_method, url, options = {}, &block)
       blueprint_opts = {

@@ -1,14 +1,12 @@
 module ApiBlueprint
-  class Blueprint < Dry::Struct
-    constructor_type :schema
-
+  class Blueprint < ApiBlueprint::Struct
     attribute :http_method, Types::Symbol.default(:get).enum(*Faraday::Connection::METHODS)
     attribute :url, Types::String
     attribute :headers, Types::Hash.default(Hash.new)
     attribute :params, Types::Hash.default(Hash.new)
     attribute :body, Types::Hash.default(Hash.new)
     attribute :creates, Types::Any
-    attribute :parser, Types.Instance(ApiBlueprint::Parser).default(ApiBlueprint::Parser.new)
+    attribute :parser, Types.Instance(ApiBlueprint::Parser).optional.default(ApiBlueprint::Parser.new)
     attribute :replacements, Types::Hash.default(Hash.new)
     attribute :after_build, Types::Instance(Proc).optional
     attribute :builder, Types.Instance(ApiBlueprint::Builder).default(ApiBlueprint::Builder.new)
