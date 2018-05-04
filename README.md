@@ -83,6 +83,29 @@ red_vehicles.cars # [<Car>, <Car>, ...]
 red_vehicles.busses # [<Bus>, <Bus>, ...]
 ```
 
+## Request registry
+
+If you use the same api request in multiple controllers, it can be cumbersome to remember to set the cache options and pass all required params to api calls. ApiBlueprint includes a registry, which can be used as a container to store blueprints along with cache options and make it quicker and simpler to re-use in controllers.
+
+You can add to the registry when initialing the api runner, or later.
+
+```ruby
+# Add `astronauts_in_space` to the registry when initializing the runner:
+api = ApiBlueprint::Runner.new registry: {
+  astronauts_in_space: { blueprint: -> { AstronautsInSpace.fetch }, cache: { ttl: 10.minutes } }
+}
+
+# Add `vehicles` to the existing registry:
+api.register :vehicles, -> { Vehicles.fetch_all }, ttl: 60.minutes
+```
+
+Once a blueprint is registered in the registry, you can invoke it via the key name on the runner:
+
+```ruby
+api.astronauts_in_space # the same as running api.run AstronautsInSpace.fetch, ttl: 10.minutes
+api.vehicles # the same as running api.run Vehicles.fetch_all, ttl: 60.minutes
+```
+
 ## Model Configuration
 
 Using a `configure` block on models, you can define a default url (host), a [parser](#configparser), a [builder](#configbuilder) and can define a list of [replacements](#configreplacements):

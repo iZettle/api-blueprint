@@ -1,24 +1,5 @@
 require "spec_helper"
 
-class Country < ApiBlueprint::Model
-  attribute :capital_city, Types::Any
-  attribute :second_largest, Types::Any
-
-  def self.fetch_cities
-    collection \
-      capital_city: City.fetch("London"),
-      second_largest: City.fetch("Manchester")
-  end
-end
-
-class City < ApiBlueprint::Model
-  attribute :name, Types::String
-
-  def self.fetch(name)
-    blueprint :get, "http://cities", params: { name: name }
-  end
-end
-
 describe "End-to-end test" do
   let(:runner) { ApiBlueprint::Runner.new }
 

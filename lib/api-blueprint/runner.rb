@@ -4,6 +4,7 @@ module ApiBlueprint
 
     option :headers, default: proc { {} }
     option :cache, default: proc { Cache.new key: "global" }
+    option :registry, default: proc { {} }
 
     def run(item, cache_options = {})
       if item.is_a?(Blueprint)
@@ -17,6 +18,18 @@ module ApiBlueprint
 
     def runner_options
       { headers: headers, cache: cache }
+    end
+
+    def register(name, blueprint, cache_options = {})
+      registry[name] = { blueprint: blueprint, cache: cache_options }
+    end
+
+    def method_missing(name, *args, &block)
+      if stored_method = registry[name].presence
+        run stored_method[:blueprint].call(*args), stored_method[:cache]
+      else
+        raise NoMethodError, "#{name} is not defined in the ApiBlueprint::Runner registry"
+      end
     end
 
     private
