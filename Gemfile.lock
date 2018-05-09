@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    api-blueprint (0.5.0)
+    api-blueprint (0.6.0)
       activemodel
       activesupport
       addressable
@@ -37,24 +37,24 @@ GEM
     dry-core (0.4.5)
       concurrent-ruby (~> 1.0)
     dry-equalizer (0.2.1)
+    dry-inflector (0.1.2)
     dry-initializer (2.4.0)
     dry-logic (0.4.2)
       dry-container (~> 0.2, >= 0.2.6)
       dry-core (~> 0.2)
       dry-equalizer (~> 0.2)
-    dry-struct (0.4.0)
-      dry-core (~> 0.4, >= 0.4.1)
+    dry-struct (0.5.0)
+      dry-core (~> 0.4, >= 0.4.3)
       dry-equalizer (~> 0.2)
-      dry-types (~> 0.12, >= 0.12.2)
+      dry-types (~> 0.13)
       ice_nine (~> 0.11)
-    dry-types (0.12.2)
+    dry-types (0.13.0)
       concurrent-ruby (~> 1.0)
-      dry-configurable (~> 0.1)
       dry-container (~> 0.3)
-      dry-core (~> 0.2, >= 0.2.1)
+      dry-core (~> 0.4, >= 0.4.4)
       dry-equalizer (~> 0.2)
+      dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 0.4, >= 0.4.2)
-      inflecto (~> 0.0.0, >= 0.0.2)
     faraday (0.15.0)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
@@ -79,7 +79,6 @@ GEM
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
-    inflecto (0.0.2)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)

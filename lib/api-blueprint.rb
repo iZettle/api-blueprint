@@ -7,6 +7,7 @@ require 'active_model'
 require 'active_support/core_ext/hash'
 require 'addressable'
 
+require 'api-blueprint/struct'
 require 'api-blueprint/response_middleware'
 require 'api-blueprint/cache'
 require 'api-blueprint/types'
