@@ -4,6 +4,7 @@ module ApiBlueprint
     include ActiveModel::Conversion
     include ActiveModel::Validations
     include ActiveModel::Serialization
+    include ActiveModel::Serializers::JSON
     extend ActiveModel::Naming
     extend ActiveModel::Callbacks
 
@@ -38,6 +39,10 @@ module ApiBlueprint
 
     def api_request_success?
       response_status.present? && (200...299).include?(response_status)
+    end
+
+    def as_json
+      super.except :response_headers, :response_status
     end
 
   end
