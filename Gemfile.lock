@@ -9,7 +9,7 @@ PATH
       dry-initializer (~> 2.4)
       dry-struct (~> 0.5)
       dry-types (~> 0.13)
-      faraday (~> 0.15.1)
+      faraday (>= 0.8)
       faraday_middleware (~> 0.12.2)
 
 GEM
