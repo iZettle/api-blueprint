@@ -134,6 +134,24 @@ describe ApiBlueprint::Blueprint, "attributes" do
       }.to raise_exception(Dry::Struct::Error)
     end
   end
+
+  describe "log_responses" do
+    it "sets the log_responses attribute" do
+      blueprint = ApiBlueprint::Blueprint.new log_responses: true
+      expect(blueprint.log_responses).to be true
+    end
+
+    it "must be a boolean" do
+      expect {
+        ApiBlueprint::Blueprint.new log_responses: 1
+      }.to raise_error(Dry::Struct::Error)
+    end
+
+    it "defaults to false" do
+      blueprint = ApiBlueprint::Blueprint.new
+      expect(blueprint.log_responses).to be false
+    end
+  end
 end
 
 describe ApiBlueprint::Blueprint, "#all_request_options" do
@@ -413,6 +431,20 @@ describe ApiBlueprint::Blueprint, "validation" do
       expect{
         result
       }.to raise_error(ApiBlueprint::BuilderError)
+    end
+  end
+end
+
+describe ApiBlueprint::Blueprint, "connection" do
+  describe "logging" do
+    it "is enabled when log_responses is true" do
+      bp = ApiBlueprint::Blueprint.new log_responses: true
+      expect(bp.connection.builder.handlers).to include Faraday::Response::Logger
+    end
+
+    it "is not enabled when log_responses is false" do
+      bp = ApiBlueprint::Blueprint.new log_responses: false
+      expect(bp.connection.builder.handlers).not_to include Faraday::Response::Logger
     end
   end
 end

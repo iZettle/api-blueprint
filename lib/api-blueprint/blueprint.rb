@@ -10,6 +10,7 @@ module ApiBlueprint
     attribute :replacements, Types::Hash.default(Hash.new)
     attribute :after_build, Types::Instance(Proc).optional
     attribute :builder, Types.Instance(ApiBlueprint::Builder).default(ApiBlueprint::Builder.new)
+    attribute :log_responses, Types::Strict::Bool.default(false)
 
     def all_request_options(options = {})
       {
@@ -38,6 +39,19 @@ module ApiBlueprint
       after_build.present? ? after_build.call(runner, created) : created
     end
 
+    def connection
+      Faraday.new do |conn|
+        conn.use ApiBlueprint::ResponseMiddleware
+        conn.response :json, content_type: /\bjson$/
+        conn.response :logger if log_responses
+
+        conn.adapter Faraday.default_adapter
+        conn.headers = {
+          "User-Agent": "ApiBlueprint"
+        }
+      end
+    end
+
     private
 
     def build(from:, headers: {}, status: nil)
@@ -60,19 +74,6 @@ module ApiBlueprint
         req.headers.merge!({ "Content-Type": "application/json" }.merge(options[:headers]))
         req.params = options[:params]
         req.body = options[:body].to_json
-      end
-    end
-
-    def connection
-      Faraday.new do |conn|
-        conn.use ApiBlueprint::ResponseMiddleware
-        conn.response :json, content_type: /\bjson$/
-        # conn.response :logger
-
-        conn.adapter Faraday.default_adapter
-        conn.headers = {
-          "User-Agent": "ApiBlueprint"
-        }
       end
     end
 
