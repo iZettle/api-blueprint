@@ -22,8 +22,8 @@ Gem::Specification.new do |s|
   s.add_dependency "dry-configurable", "~> 0.7"
   s.add_dependency "faraday", "~> 0.15.1"
   s.add_dependency "faraday_middleware", "~> 0.12.2"
-  s.add_dependency "activemodel", ">= 5.1", "< 5.3"
-  s.add_dependency "activesupport", ">= 5.1", "< 5.3"
+  s.add_dependency "activemodel", [">= 5.1", "< 5.3"]
+  s.add_dependency "activesupport", [">= 5.1", "< 5.3"]
   s.add_dependency "addressable", "~> 2.5"
 
   s.add_development_dependency "pry", "~> 0.11"
