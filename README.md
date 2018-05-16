@@ -224,6 +224,24 @@ blueprint :get, "/endpoint" do |runner, result|
 end
 ```
 
+## Response logging
+
+Response logging can be enabled on a per-blueprint level, or by setting `config.log_responses = true` on an `ApiBlueprint::Model`:
+
+```ruby
+class AstronautsInSpace < ApiBlueprint::Model
+  configure do |config|
+    # enable logging for all blueprints
+    config.log_responses = true
+  end
+
+  def self.fetch
+    # enable logging for just one blueprint
+    blueprint :get, "http://api.open-notify.org/astros.json", log_responses: true
+  end
+end
+```
+
 ## A note on Dry::Struct immutability
 
 Models you create use `Dry::Struct` to handle initialization and assignment. `Dry::Struct` is designed with immutability in mind, so if you need to mutate the objects you have, there are two possibilities; explicitly define an `attr_writer` for the attributes which you want to mutate, or do things the "Dry::Struct way" and use the current instance to initialize a new instance:

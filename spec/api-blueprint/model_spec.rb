@@ -14,6 +14,7 @@ class ConfiguredModel < ApiBlueprint::Model
     config.parser = nil
     config.builder = CustomBuilder.new
     config.replacements = { foo: :bar }
+    config.log_responses = true
   end
 end
 
@@ -100,6 +101,14 @@ describe ApiBlueprint::Model do
     it "is possible to set the replacements" do
       expect(ConfiguredModel.config.replacements).to eq({ foo: :bar })
     end
+
+    it "should set the default log_responses to false" do
+      expect(PlainModel.config.log_responses).to be false
+    end
+
+    it "is possible to set log_responses" do
+      expect(ConfiguredModel.config.log_responses).to be true
+    end
   end
 
   describe ".blueprint" do
@@ -141,6 +150,10 @@ describe ApiBlueprint::Model do
 
     it "passes through replacements" do
       expect(blueprint.replacements).to eq replacements
+    end
+
+    it "passes through log_responses" do
+      expect(blueprint.log_responses).to eq true
     end
 
     it "uses the models default replacements" do

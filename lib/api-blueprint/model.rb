@@ -12,6 +12,7 @@ module ApiBlueprint
     setting :parser, Parser.new
     setting :builder, Builder.new
     setting :replacements, {}
+    setting :log_responses, false
 
     attribute :response_headers, Types::Hash.optional
     attribute :response_status, Types::Integer.optional
@@ -23,7 +24,8 @@ module ApiBlueprint
         creates: self,
         parser: config.parser,
         replacements: config.replacements,
-        builder: config.builder
+        builder: config.builder,
+        log_responses: config.log_responses
       }.merge(options)
 
       if block_given?
