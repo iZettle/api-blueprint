@@ -227,8 +227,8 @@ describe ApiBlueprint::Model do
     end
 
     it "should include attributes" do
-      expect(json[:foo]).to eq "foo"
-      expect(json[:bar]).to eq "bar"
+      expect(json["foo"]).to eq "foo"
+      expect(json["bar"]).to eq "bar"
     end
 
     it "should not include response_headers" do

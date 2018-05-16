@@ -3,8 +3,6 @@ module ApiBlueprint
     extend Dry::Configurable
     include ActiveModel::Conversion
     include ActiveModel::Validations
-    include ActiveModel::Serialization
-    include ActiveModel::Serializers::JSON
     extend ActiveModel::Naming
     extend ActiveModel::Callbacks
 
