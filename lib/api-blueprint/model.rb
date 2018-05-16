@@ -43,8 +43,8 @@ module ApiBlueprint
       response_status.present? && (200...299).include?(response_status)
     end
 
-    def as_json
-      super.except :response_headers, :response_status
+    def as_json(options = nil)
+      super(options).except :response_headers, :response_status
     end
 
   end
