@@ -3,7 +3,7 @@ require "spec_helper"
 describe ApiBlueprint, "config" do
   describe "logger" do
     it "should default to nil" do
-      expect(ApiBlueprint.config.logger)
+      expect(ApiBlueprint.config.logger).to be nil
     end
 
     it "should be possible to set it as a custom logger" do
