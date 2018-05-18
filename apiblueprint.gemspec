@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency "dry-configurable"
   s.add_dependency "faraday"
   s.add_dependency "faraday_middleware"
+  s.add_dependency "faraday-detailed_logger"
   s.add_dependency "activemodel"
   s.add_dependency "activesupport"
   s.add_dependency "addressable"

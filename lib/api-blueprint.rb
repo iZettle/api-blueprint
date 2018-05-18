@@ -3,6 +3,7 @@ require 'dry-struct'
 require 'dry-initializer'
 require 'faraday'
 require 'faraday_middleware'
+require 'faraday/detailed_logger'
 require 'active_model'
 require 'addressable'
 require 'active_support'
@@ -21,6 +22,10 @@ require 'api-blueprint/runner'
 require 'api-blueprint/collection'
 
 module ApiBlueprint
+  extend Dry::Configurable
+
+  setting :logger, nil
+
   class ResponseError < StandardError
     attr_reader :status, :headers, :body
     def initialize(env)

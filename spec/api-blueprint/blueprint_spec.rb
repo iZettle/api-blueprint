@@ -439,12 +439,45 @@ describe ApiBlueprint::Blueprint, "connection" do
   describe "logging" do
     it "is enabled when log_responses is true" do
       bp = ApiBlueprint::Blueprint.new log_responses: true
-      expect(bp.connection.builder.handlers).to include Faraday::Response::Logger
+      expect(bp.connection.builder.handlers).to include Faraday::DetailedLogger::Middleware
     end
 
     it "is not enabled when log_responses is false" do
       bp = ApiBlueprint::Blueprint.new log_responses: false
-      expect(bp.connection.builder.handlers).not_to include Faraday::Response::Logger
+      expect(bp.connection.builder.handlers).not_to include Faraday::DetailedLogger::Middleware
+    end
+
+    context "when Rails is loaded and in production env" do
+      before do
+        Rails = double()
+        expect(Rails).to receive_message_chain(:env, :production?).and_return true
+        @bp = ApiBlueprint::Blueprint.new log_responses: true
+      end
+
+      after do
+        Object.send(:remove_const, :Rails)
+        ENV["ENABLE_PRODUCTION_RESPONSE_LOGGING"] = nil
+      end
+
+      context "without ENABLE_PRODUCTION_RESPONSE_LOGGING" do
+        before do
+          ENV["ENABLE_PRODUCTION_RESPONSE_LOGGING"] = nil
+        end
+
+        it "is not enabled even if log_responses is true" do
+          expect(@bp.connection.builder.handlers).not_to include Faraday::DetailedLogger::Middleware
+        end
+      end
+
+      context "with ENABLE_PRODUCTION_RESPONSE_LOGGING" do
+        before do
+          ENV["ENABLE_PRODUCTION_RESPONSE_LOGGING"] = "true"
+        end
+
+        it "is enabled" do
+          expect(@bp.connection.builder.handlers).to include Faraday::DetailedLogger::Middleware
+        end
+      end
     end
   end
 end
