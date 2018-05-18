@@ -46,7 +46,7 @@ module ApiBlueprint
         conn.use :instrumentation, name: "api-blueprint.request"
 
         if enable_response_logging?
-          conn.response :detailed_logger, ApiBlueprint.config.logger, "api-blueprint"
+          conn.response :detailed_logger, ApiBlueprint.config.logger, "API-BLUEPRINT"
         end
 
         conn.adapter Faraday.default_adapter
