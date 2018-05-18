@@ -43,7 +43,11 @@ module ApiBlueprint
       Faraday.new do |conn|
         conn.use ApiBlueprint::ResponseMiddleware
         conn.response :json, content_type: /\bjson$/
-        conn.response :logger if log_responses
+        conn.use :instrumentation, name: "api-blueprint.request"
+
+        if enable_response_logging?
+          conn.response :detailed_logger, ApiBlueprint.config.logger, "api-blueprint"
+        end
 
         conn.adapter Faraday.default_adapter
         conn.headers = {
@@ -94,6 +98,14 @@ module ApiBlueprint
 
     def set_error(obj, field, messages)
       obj.errors.add field.to_sym, messages
+    end
+
+    def enable_response_logging?
+      if defined?(Rails) && Rails.env.production?
+        log_responses && ENV["ENABLE_PRODUCTION_RESPONSE_LOGGING"]
+      else
+        log_responses
+      end
     end
 
   end
