@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    api-blueprint (0.8.0)
+    api-blueprint (0.8.1)
       activemodel
       activesupport
       addressable
@@ -56,7 +56,7 @@ GEM
       dry-equalizer (~> 0.2)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 0.4, >= 0.4.2)
-    faraday (0.15.1)
+    faraday (0.15.2)
       multipart-post (>= 1.2, < 3)
     faraday-detailed_logger (2.1.2)
       faraday (~> 0.8)
