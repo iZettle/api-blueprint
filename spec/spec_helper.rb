@@ -20,6 +20,10 @@ class Car < ApiBlueprint::Model
   end
 end
 
+class CarPark < ApiBlueprint::Model
+  attribute :cars, Types::Array.of(Types.Constructor(Car))
+end
+
 class CarWithValidation < Car
   validates :name, presence: true
 end
