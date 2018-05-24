@@ -23,7 +23,7 @@ module ApiBlueprint
         response_status: status
       }
 
-      meta.merge with_replacements(item.deep_symbolize_keys)
+      meta.merge KeyReplacer.replace(item.deep_symbolize_keys, replacements)
     end
 
     def build_item(item)
@@ -31,16 +31,6 @@ module ApiBlueprint
         creates.new item
       else
         raise BuilderError, "To build an object, you must set #creates"
-      end
-    end
-
-    private
-
-    def with_replacements(item)
-      item.tap do |item|
-        replacements.each do |bad, good|
-          item[good] = item.delete bad if item.has_key? bad
-        end
       end
     end
 

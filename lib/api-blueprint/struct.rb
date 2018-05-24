@@ -5,5 +5,13 @@ module ApiBlueprint
     transform_types do |type|
       type.default? ? type : type.meta(omittable: true)
     end
+
+    def self.new(attributes = default_attributes)
+      if respond_to?(:config) && config.replacements
+        attributes = KeyReplacer.replace(attributes, config.replacements)
+      end
+
+      super
+    end
   end
 end

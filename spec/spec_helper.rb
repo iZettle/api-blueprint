@@ -14,6 +14,9 @@ class Car < ApiBlueprint::Model
 
   configure do |config|
     config.host = "http://car"
+    config.replacements = {
+      car_name: :name
+    }
   end
 end
 
