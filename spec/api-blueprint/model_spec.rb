@@ -13,7 +13,7 @@ class ConfiguredModel < ApiBlueprint::Model
     config.host = "http://foobar.com"
     config.parser = nil
     config.builder = CustomBuilder.new
-    config.replacements = { foo: :bar }
+    config.replacements = { some_bad_key: :foo }
     config.log_responses = true
   end
 end
@@ -99,7 +99,7 @@ describe ApiBlueprint::Model do
     end
 
     it "is possible to set the replacements" do
-      expect(ConfiguredModel.config.replacements).to eq({ foo: :bar })
+      expect(ConfiguredModel.config.replacements).to eq({ some_bad_key: :foo })
     end
 
     it "should set the default log_responses to false" do
@@ -158,7 +158,7 @@ describe ApiBlueprint::Model do
 
     it "uses the models default replacements" do
       bp = ConfiguredModel.blueprint :post, "/foo"
-      expect(bp.replacements).to eq({ foo: :bar })
+      expect(bp.replacements).to eq({ some_bad_key: :foo })
     end
 
     it "passes a block to the blueprint as after_build" do

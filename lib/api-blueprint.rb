@@ -9,6 +9,7 @@ require 'addressable'
 require 'active_support'
 require 'active_support/core_ext'
 
+require 'api-blueprint/key_replacer'
 require 'api-blueprint/struct'
 require 'api-blueprint/response_middleware'
 require 'api-blueprint/cache'
