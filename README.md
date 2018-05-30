@@ -242,6 +242,27 @@ class AstronautsInSpace < ApiBlueprint::Model
 end
 ```
 
+## Caching
+
+ApiBlueprint includes the ability to cache responses and avoid numerous api calls to endpoints, but does not implement a caching mechanism itself. Instead it exposes a skeleton cache class which you can override with your own caching mechanism. See the [Rails cache example](https://github.com/iZettle/api-blueprint/blob/master/examples/cache.rb) for an example implementation using `Rails.cache.write`, `Rails.cache.read`, etc.
+
+Caching is enabled on the runner level. In this case, using the Rails session id to make the cache unique to each user:
+
+```ruby
+ApiBlueprint::Runner.new({
+  cache: BlueprintCache.new(key: session.id)
+})
+```
+
+The `ApiBlueprint::Cache` class has a method to generate unique keys for the cache items by creating a checksum of the request headers and url. It doesn't include the body of the request in this checksum by default, and if you want to exclude more headers, you can do so using the `ignored_headers` setting on the Cache class. For example, to not include "X-Real-IP" and "X-Request-Id" headers, which would otherwise render the cache useless:
+
+```ruby
+ ApiBlueprint::Cache.configure do |config|
+   # Using .concat here because the default is [:body] and you probably want to keep that
+   config.ignored_headers.concat ["X-Real-IP", "X-Request-Id"]
+ end
+```
+
 ## A note on Dry::Struct immutability
 
 Models you create use `Dry::Struct` to handle initialization and assignment. `Dry::Struct` is designed with immutability in mind, so if you need to mutate the objects you have, there are two possibilities; explicitly define an `attr_writer` for the attributes which you want to mutate, or do things the "Dry::Struct way" and use the current instance to initialize a new instance:

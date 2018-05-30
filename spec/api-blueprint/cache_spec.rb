@@ -3,6 +3,12 @@ require "spec_helper"
 describe ApiBlueprint::Cache do
   let(:cache) { ApiBlueprint::Cache.new key: "test" }
 
+  describe "ignored_headers" do
+    it "defaults to an empty array" do
+      expect(ApiBlueprint::Cache.config.ignored_headers).to eq [:body]
+    end
+  end
+
   describe "#key" do
     it "is set as an option when initializing" do
       expect(cache.key).to eq "test"
@@ -37,6 +43,38 @@ describe ApiBlueprint::Cache do
       a = cache.generate_cache_key(Car, { foo: "bar" })
       b = cache.generate_cache_key(Car, { foo: "bar", body: "foo" })
       expect(a).to eq b
+    end
+
+    context "with ignored headers" do
+      before do
+        ApiBlueprint::Cache.configure do |config|
+          config.ignored_headers.concat ["X-Request-ID"]
+        end
+      end
+
+      after do
+        ApiBlueprint::Cache.configure do |config|
+          config.ignored_headers = [:body]
+        end
+      end
+
+      it "does not include ignored_headers when generating a key" do
+        a = cache.generate_cache_key(Car, { foo: "bar", "X-Request-ID": "123" })
+        b = cache.generate_cache_key(Car, { foo: "bar", "X-Request-ID": "ABC" })
+        expect(a).to eq b
+      end
+
+      it "shouldn't matter if the keys are strings or symbols" do
+        a = cache.generate_cache_key(Car, { foo: "bar", "X-Request-ID": "123" })
+        b = cache.generate_cache_key(Car, { foo: "bar", "X-Request-ID" => "ABC" })
+        expect(a).to eq b
+      end
+
+      it "doesn't explode if options isn't a hash" do
+        expect {
+          cache.generate_cache_key(Car, "Hello")
+        }.not_to raise_error
+      end
     end
   end
 end
