@@ -5,7 +5,7 @@ describe ApiBlueprint::Cache do
 
   describe "ignored_headers" do
     it "defaults to an empty array" do
-      expect(ApiBlueprint::Cache.config.ignored_headers).to eq [:body]
+      expect(ApiBlueprint::Cache.config.ignored_headers).to eq []
     end
   end
 
@@ -48,25 +48,25 @@ describe ApiBlueprint::Cache do
     context "with ignored headers" do
       before do
         ApiBlueprint::Cache.configure do |config|
-          config.ignored_headers.concat ["X-Request-ID"]
+          config.ignored_headers = ["X-Request-ID"]
         end
       end
 
       after do
         ApiBlueprint::Cache.configure do |config|
-          config.ignored_headers = [:body]
+          config.ignored_headers = []
         end
       end
 
       it "does not include ignored_headers when generating a key" do
-        a = cache.generate_cache_key(Car, { foo: "bar", "X-Request-ID": "123" })
-        b = cache.generate_cache_key(Car, { foo: "bar", "X-Request-ID": "ABC" })
+        a = cache.generate_cache_key(Car, { foo: "bar", headers: { "X-Request-ID": "123" } })
+        b = cache.generate_cache_key(Car, { foo: "bar", headers: { "X-Request-ID": "ABC" } })
         expect(a).to eq b
       end
 
       it "shouldn't matter if the keys are strings or symbols" do
-        a = cache.generate_cache_key(Car, { foo: "bar", "X-Request-ID": "123" })
-        b = cache.generate_cache_key(Car, { foo: "bar", "X-Request-ID" => "ABC" })
+        a = cache.generate_cache_key(Car, { foo: "bar", headers: { "X-Request-ID": "123" } })
+        b = cache.generate_cache_key(Car, { foo: "bar", headers: { "X-Request-ID" => "ABC" } })
         expect(a).to eq b
       end
 

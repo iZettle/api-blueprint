@@ -254,12 +254,13 @@ ApiBlueprint::Runner.new({
 })
 ```
 
-The `ApiBlueprint::Cache` class has a method to generate unique keys for the cache items by creating a checksum of the request headers and url. It doesn't include the body of the request in this checksum by default, and if you want to exclude more headers, you can do so using the `ignored_headers` setting on the Cache class. For example, to not include "X-Real-IP" and "X-Request-Id" headers, which would otherwise render the cache useless:
+The `ApiBlueprint::Cache` class has a method to generate unique keys for the cache items by creating a checksum of the request headers and url. It doesn't include the body of the request in this checksum by default, and if you want to exclude headers, you can do so using the `ignored_headers` setting on the Cache class.
+
+For example, to not include "X-Real-IP" and "X-Request-Id" headers, which would otherwise render the cache useless:
 
 ```ruby
  ApiBlueprint::Cache.configure do |config|
-   # Using .concat here because the default is [:body] and you probably want to keep that
-   config.ignored_headers.concat ["X-Real-IP", "X-Request-Id"]
+   config.ignored_headers = ["X-Real-IP", "X-Request-Id"]
  end
 ```
 
