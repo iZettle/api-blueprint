@@ -13,4 +13,11 @@ describe ApiBlueprint::KeyReplacer, ".replace" do
   it "doesn't rename keys not in replacements" do
     expect(replaced[:bar]).to eq "Bar"
   end
+
+  it "doesn't explode if attributes is not a hash" do
+    car = Car.new
+    expect {
+      ApiBlueprint::KeyReplacer.replace(car, replacements)
+    }.not_to raise_error
+  end
 end
