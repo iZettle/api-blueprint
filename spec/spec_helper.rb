@@ -22,6 +22,12 @@ end
 
 class CarPark < ApiBlueprint::Model
   attribute :cars, Types::Array.of(Types.Constructor(Car))
+
+  configure do |config|
+    config.cache_key_generator = -> (key, options) do
+      "custom_cache_key"
+    end
+  end
 end
 
 class CarWithValidation < Car

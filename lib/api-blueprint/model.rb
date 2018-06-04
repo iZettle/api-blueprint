@@ -11,6 +11,7 @@ module ApiBlueprint
     setting :builder, Builder.new
     setting :replacements, {}
     setting :log_responses, false
+    setting :cache_key_generator, nil, reader: true
 
     attribute :response_headers, Types::Hash.optional
     attribute :response_status, Types::Integer.optional
