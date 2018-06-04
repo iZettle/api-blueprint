@@ -23,6 +23,9 @@ class ChildModel < ConfiguredModel
 
   configure do |config|
     config.host = "http://some-other-host.com"
+    config.cache_key_generator = -> (key, options) do
+      "custom_cache_key"
+    end
   end
 end
 
@@ -108,6 +111,18 @@ describe ApiBlueprint::Model do
 
     it "is possible to set log_responses" do
       expect(ConfiguredModel.config.log_responses).to be true
+    end
+
+    it "should set the default cache_key_generator to nil" do
+      expect(PlainModel.config.cache_key_generator).to be_nil
+    end
+
+    it "is possible to set a cache_key_generator" do
+      expect(ChildModel.config.cache_key_generator).to be_a Proc
+    end
+
+    it "is possible to access the cache_key_generator through a class reader method" do
+      expect(ChildModel.cache_key_generator).to be_a Proc
     end
   end
 

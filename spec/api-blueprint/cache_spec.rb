@@ -45,6 +45,19 @@ describe ApiBlueprint::Cache do
       expect(a).to eq b
     end
 
+    context "when a class defines its own cache_key_generator" do
+      it "should invoke the cache_key_generator" do
+        gen = double()
+        expect(gen).to receive(:call).with("test", { foo: "bar" })
+        expect(CarPark).to receive(:cache_key_generator).at_least(:once).and_return gen
+        cache.generate_cache_key(CarPark, { foo: "bar" })
+      end
+
+      it "should not generate its own cache key" do
+        expect(cache.generate_cache_key(CarPark, { foo: "bar" })).to eq "custom_cache_key"
+      end
+    end
+
     context "with ignored headers" do
       before do
         ApiBlueprint::Cache.configure do |config|

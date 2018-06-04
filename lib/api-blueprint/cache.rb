@@ -20,13 +20,17 @@ module ApiBlueprint
     end
 
     def generate_cache_key(klass, options)
-      if options.is_a? Hash
-        options = options.clone.with_indifferent_access.except :body
-        options[:headers] = options[:headers].except *self.class.config.ignored_headers if options[:headers]
-      end
+      if klass&.cache_key_generator&.present?
+        klass.cache_key_generator.call key, options
+      else
+        if options.is_a? Hash
+          options = options.clone.with_indifferent_access.except :body
+          options[:headers] = options[:headers].except *self.class.config.ignored_headers if options[:headers]
+        end
 
-      options_digest = Digest::MD5.hexdigest Marshal::dump(options.to_s.chars.sort.join)
-      "#{key}:#{klass&.name}:#{options_digest}"
+        options_digest = Digest::MD5.hexdigest Marshal::dump(options.to_s.chars.sort.join)
+        "#{key}:#{klass&.name}:#{options_digest}"
+      end
     end
 
   end
