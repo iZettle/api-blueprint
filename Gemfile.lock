@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    api-blueprint (0.9.1)
+    api-blueprint (0.10.0)
       activemodel
       activesupport
       addressable
