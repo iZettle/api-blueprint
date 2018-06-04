@@ -264,6 +264,20 @@ For example, to not include "X-Real-IP" and "X-Request-Id" headers, which would 
  end
 ```
 
+If you would like to override how the cache keys are generated, you can do it for all classes by redefining `generate_cache_key` in your cache class. If you only need to override the cache key for certain models (for example, a public api cache might not want to use the session id to make the cache keys unique), you can do so by implementing a `cache_key_generator` proc on your model config:
+
+```ruby
+class AstronautsInSpace < ApiBlueprint::Model
+  configure do |config|
+    config.cache_key_generator = -> (key, options) do
+      # `key` is the key which you have initialized the instance of the cache class with
+      # `options` is all the api-related options for the request (url, headers, body, etc)
+      "some-custom-cache-key-here"
+    end
+  end
+end
+```
+
 ## A note on Dry::Struct immutability
 
 Models you create use `Dry::Struct` to handle initialization and assignment. `Dry::Struct` is designed with immutability in mind, so if you need to mutate the objects you have, there are two possibilities; explicitly define an `attr_writer` for the attributes which you want to mutate, or do things the "Dry::Struct way" and use the current instance to initialize a new instance:
