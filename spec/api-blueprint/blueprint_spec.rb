@@ -388,6 +388,16 @@ describe ApiBlueprint::Blueprint, "running" do
     after_build = -> (_, response) { duck.quack }
     ApiBlueprint::Blueprint.new(url: "http://web/foo", after_build: after_build).run
   end
+
+  context "when the request timesout" do
+    it "raises an ApiBlueprint::ConnectionFailed exception" do
+      stub_request(:get, "http://timeout").to_timeout
+
+      expect {
+        ApiBlueprint::Blueprint.new(url: "http://timeout").run
+      }.to raise_error(ApiBlueprint::ConnectionFailed)
+    end
+  end
 end
 
 describe ApiBlueprint::Blueprint, "validation" do
