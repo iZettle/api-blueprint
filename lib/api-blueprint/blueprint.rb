@@ -39,7 +39,7 @@ module ApiBlueprint
 
       after_build.present? ? after_build.call(runner, created) : created
     rescue Faraday::ConnectionFailed
-      raise ApiBlueprint::ConnectionFailed, "timeout"
+      raise ApiBlueprint::ConnectionFailed
     end
 
     def connection
