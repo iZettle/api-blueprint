@@ -280,6 +280,14 @@ class AstronautsInSpace < ApiBlueprint::Model
 end
 ```
 
+## Timeouts
+
+The default request timeout is set to 5 seconds. You can change this on a per-blueprint basis by passing the `timeout` option to the blueprint:
+
+```ruby
+blueprint :get, "/endpoint", timeout: 10.seconds
+```
+
 ## A note on Dry::Struct immutability
 
 Models you create use `Dry::Struct` to handle initialization and assignment. `Dry::Struct` is designed with immutability in mind, so if you need to mutate the objects you have, there are two possibilities; explicitly define an `attr_writer` for the attributes which you want to mutate, or do things the "Dry::Struct way" and use the current instance to initialize a new instance:

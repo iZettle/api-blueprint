@@ -152,6 +152,30 @@ describe ApiBlueprint::Blueprint, "attributes" do
       expect(blueprint.log_responses).to be false
     end
   end
+
+  describe "timeout" do
+    it "sets the timeout attribute" do
+      blueprint = ApiBlueprint::Blueprint.new timeout: 100
+      expect(blueprint.timeout).to be 100
+    end
+
+    it "must be an integer" do
+      expect {
+        ApiBlueprint::Blueprint.new timeout: "foo"
+      }.to raise_error(Dry::Struct::Error)
+    end
+
+    it "defaults to 5" do
+      blueprint = ApiBlueprint::Blueprint.new
+      expect(blueprint.timeout).to be 5
+    end
+
+    it "is possible to use 10.seconds" do
+      expect {
+        ApiBlueprint::Blueprint.new timeout: 10.seconds
+      }.not_to raise_error
+    end
+  end
 end
 
 describe ApiBlueprint::Blueprint, "#all_request_options" do
@@ -387,6 +411,18 @@ describe ApiBlueprint::Blueprint, "running" do
     expect(duck).to receive(:quack)
     after_build = -> (_, response) { duck.quack }
     ApiBlueprint::Blueprint.new(url: "http://web/foo", after_build: after_build).run
+  end
+
+  it "uses the correct timeout" do
+    stub_request(:get, "http://web/foo")
+    run = ApiBlueprint::Blueprint.new(url: "http://web/foo", timeout: 100).run
+    expect(run.env.request.timeout).to eq 100
+  end
+
+  it "converts ActiveSupport::Duration to an integer" do
+    stub_request(:get, "http://web/foo")
+    run = ApiBlueprint::Blueprint.new(url: "http://web/foo", timeout: 2.minutes).run
+    expect(run.env.request.timeout).to eq 120
   end
 
   context "when the request timesout" do
