@@ -182,6 +182,11 @@ describe ApiBlueprint::Model do
       end
       expect(bp.after_build.call).to eq "Hello"
     end
+
+    it "passes timeout to the blueprint" do
+      bp = ConfiguredModel.blueprint :post, "/foo", timeout: 150
+      expect(bp.timeout).to eq 150
+    end
   end
 
   it "passes the builder from the model config" do

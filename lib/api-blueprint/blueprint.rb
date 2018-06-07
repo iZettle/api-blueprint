@@ -11,6 +11,7 @@ module ApiBlueprint
     attribute :after_build, Types::Instance(Proc).optional
     attribute :builder, Types.Instance(ApiBlueprint::Builder).default(ApiBlueprint::Builder.new)
     attribute :log_responses, Types::Strict::Bool.default(false)
+    attribute :timeout, Types::Strict::Integer.default(5)
 
     def all_request_options(options = {})
       {
@@ -37,6 +38,8 @@ module ApiBlueprint
       end
 
       after_build.present? ? after_build.call(runner, created) : created
+    rescue Faraday::ConnectionFailed
+      raise ApiBlueprint::ConnectionFailed
     end
 
     def connection
@@ -78,6 +81,7 @@ module ApiBlueprint
         req.headers.merge!({ "Content-Type": "application/json" }.merge(options[:headers]))
         req.params = options[:params]
         req.body = options[:body].to_json
+        req.options.timeout = timeout.to_i
       end
     end
 
