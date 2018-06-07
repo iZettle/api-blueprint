@@ -177,6 +177,8 @@ Certain response statuses will also cause ApiBlueprint to behave in different wa
 | 402 - 499 | raises `ApiBlueprint::ClientError` |
 | 500 - 599 | raises `ApiBlueprint::ServerError` |
 
+Additionally, if the request timesout or some other error occurs which prevents the request from ever receiving a response, an `ApiBlueprint::ConnectionFailed` error will be raised.
+
 ## Access to response headers and status codes
 
 By default, ApiBlueprint tries to set `response_headers` and `response_status` on the model which is created from an API response. `ApiBlueprint::Model` also has a convenience method `api_request_success?` which can be used to easily assert whether a response was in the 200-399 range. This makes it simple to render different responses in controllers. For example:
