@@ -1,5 +1,5 @@
 module ApiBlueprint
-  class Parser
+  class Parser < ApiBlueprint::Struct
 
     # Nothing special here. Write a class which overrides #parse
     # to make a custom parser.
