@@ -82,6 +82,7 @@ module ApiBlueprint
         req.params = options[:params]
         req.body = options[:body].to_json
         req.options.timeout = timeout.to_i
+        req.options.params_encoder = Faraday::FlatParamsEncoder
       end
     end
 
