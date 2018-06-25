@@ -1,4 +1,6 @@
-# ApiBlueprint
+<p align="center"> 
+  <img src="https://raw.githubusercontent.com/iZettle/api-blueprint/master/api-blueprint-logo.png" alt="Api Blueprint" width="600">
+</p>
 
 ApiBlueprint is a simple wrapper designed to be used in a Rails app for running http requests through Faraday and generating strongly-typed models from the JSON responses.
 
