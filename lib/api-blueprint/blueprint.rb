@@ -80,7 +80,7 @@ module ApiBlueprint
         req.url options[:url]
         req.headers.merge!({ "Content-Type": "application/json" }.merge(options[:headers]))
         req.params = options[:params]
-        req.body = options[:body].to_json
+        req.body = options[:body].to_json if options[:body].present?
         req.options.timeout = timeout.to_i
         req.options.params_encoder = Faraday::FlatParamsEncoder
       end
