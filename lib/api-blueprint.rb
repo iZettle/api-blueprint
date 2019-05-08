@@ -39,6 +39,7 @@ module ApiBlueprint
   class DefinitionError < StandardError; end
   class BuilderError < StandardError; end
   class ConnectionFailed < StandardError; end
+  class TimeoutError < StandardError; end
   class ServerError < ResponseError; end
   class UnauthenticatedError < ResponseError; end
   class ClientError < ResponseError; end
