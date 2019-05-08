@@ -433,6 +433,14 @@ describe ApiBlueprint::Blueprint, "running" do
         ApiBlueprint::Blueprint.new(url: "http://timeout").run
       }.to raise_error(ApiBlueprint::ConnectionFailed)
     end
+
+    it "converts Faraday::TimeoutError to ApiBlueprint::TimeoutError" do
+        stub_request(:get, "http://timeout").to_raise(Faraday::TimeoutError.new)
+
+        expect {
+            ApiBlueprint::Blueprint.new(url: "http://timeout").run
+        }.to raise_error(ApiBlueprint::TimeoutError)
+    end
   end
 end
 

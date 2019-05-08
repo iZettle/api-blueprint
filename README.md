@@ -126,7 +126,7 @@ end
 ### Config.builder
 
 When running a blueprint, after the response is returned and parsed, the result is passed to a builder, which is responsible for initializing objects from the response. The default [ApiBlueprint::Builder](https://github.com/iZettle/api-blueprint/blob/master/lib/api-blueprint/builder.rb)
- will pass the attributes from the response into the initializer for the class the blueprint was defined in.
+will pass the attributes from the response into the initializer for the class the blueprint was defined in.
 
 If you want to change the behavior of the builder, or have a complex response which needs manipulation before it should be passed to the initializer, you can define a custom builder. Custom builders must inherit from the default builder, and can override any combination of the core methods which are used to build responses; `build`, `prepare_item`, and `build_item`. Refer to the [default builder](https://github.com/iZettle/api-blueprint/blob/master/lib/api-blueprint/builder.rb) to see what those methods do.
 
@@ -171,15 +171,15 @@ If an API response includes an `errors` object, ApiBlueprint uses it to assign `
 
 Certain response statuses will also cause ApiBlueprint to behave in different ways:
 
-| HTTP Status range | Behavior |
-| ----------------- | -------- |
-| 200 - 400 | Objects are built normally, no errors raised |
-| 401 | raises `ApiBlueprint::UnauthenticatedError` |
-| 404 | raises `ApiBlueprint::NotFoundError` |
-| 402 - 499 | raises `ApiBlueprint::ClientError` |
-| 500 - 599 | raises `ApiBlueprint::ServerError` |
+| HTTP Status range | Behavior                                     |
+| ----------------- | -------------------------------------------- |
+| 200 - 400         | Objects are built normally, no errors raised |
+| 401               | raises `ApiBlueprint::UnauthenticatedError`  |
+| 404               | raises `ApiBlueprint::NotFoundError`         |
+| 402 - 499         | raises `ApiBlueprint::ClientError`           |
+| 500 - 599         | raises `ApiBlueprint::ServerError`           |
 
-Additionally, if the request timesout or some other error occurs which prevents the request from ever receiving a response, an `ApiBlueprint::ConnectionFailed` error will be raised.
+Additionally, if the request has an error which prevents the request from ever receiving a response, an `ApiBlueprint::ConnectionFailed` error will be raised. If a request times out, an `ApiBlueprint::TimeoutError` error will be raised.
 
 ## Access to response headers and status codes
 
