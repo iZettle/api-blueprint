@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  s.add_dependency "dry-types"
+  s.add_dependency "dry-types", ">= 1.4"
   s.add_dependency "dry-struct"
   s.add_dependency "dry-initializer"
   s.add_dependency "dry-configurable"

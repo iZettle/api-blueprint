@@ -3,7 +3,7 @@ module ApiBlueprint
     transform_keys &:to_sym
 
     transform_types do |type|
-      type.default? ? type : type.meta(omittable: true)
+      type.default? ? type : type.omittable
     end
 
     def self.new(attributes = default_attributes)
