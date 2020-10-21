@@ -1,3 +1,11 @@
+# DEPRECATION NOTICE
+
+> This project is no longer maintaind by iZettle, please go to [estum/api-blueprint](https://github.com/estum/api-blueprint) for continued support.
+
+# DEPRECATION NOTICE
+
+---
+
 <p align="center"> 
   <img src="https://raw.githubusercontent.com/iZettle/api-blueprint/master/api-blueprint-logo.png" alt="Api Blueprint" width="600">
 </p>
