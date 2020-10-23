@@ -1,10 +1,10 @@
 module ApiBlueprint
   class Builder < ApiBlueprint::Struct
 
-    attribute :body, Types::Hash.default(Hash.new)
-    attribute :headers, Types::Hash.default(Hash.new)
+    attribute :body, Types::Hash.default { Hash.new }
+    attribute :headers, Types::Hash.default { Hash.new }
     attribute :status, Types::Integer.optional
-    attribute :replacements, Types::Hash.default(Hash.new)
+    attribute :replacements, Types::Hash.default { Hash.new }
     attribute :creates, Types::Any.optional
 
     attr_writer :body
